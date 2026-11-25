@@ -4,3 +4,4 @@ private-art/
 .env*
 playwright-report/
 test-results/
+coverage/

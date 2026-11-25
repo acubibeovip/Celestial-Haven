@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 test('renders the Boot scene from the built page in an iframe', async ({ page, baseURL }) => {
+  // Page-level events also cover child frames.
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+
   await page.setContent('<iframe title="Celestial Haven" width="500" height="290"></iframe>');
   await page.locator('iframe').evaluate((frame, url) => {
     frame.setAttribute('src', url);
@@ -15,4 +22,5 @@ test('renders the Boot scene from the built page in an iframe', async ({ page, b
       index % 4 === 0 && channel === 255 &&
       pixels[index + 1] === 255 && pixels[index + 2] === 255 && pixels[index + 3] === 255);
   })).toBe(true);
+  expect(errors).toEqual([]);
 });

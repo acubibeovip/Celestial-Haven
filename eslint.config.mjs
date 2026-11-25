@@ -5,7 +5,7 @@ const browserOnlyGlobals = Object.keys(globals.browser)
   .filter((name) => !Object.hasOwn(globals.es2025, name));
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'playwright-report/**', 'test-results/**'] },
+  { ignores: ['tests/lint-fixtures/**', 'dist/**', 'playwright-report/**', 'test-results/**'] },
   tseslint.configs.recommended,
   {
     files: ['src/{domain,shared}/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
