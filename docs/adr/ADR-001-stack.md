@@ -1,6 +1,6 @@
 # ADR-001 Web-first stack
 
-Status: Proposed
+Status: Accepted (2026-11-25, reviewed in PR #2)
 
 Date: 2026-11-25
 
