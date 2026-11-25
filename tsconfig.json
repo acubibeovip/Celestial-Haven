@@ -10,6 +10,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "types": ["node"],
     "paths": {
       "@domain/*": ["./src/domain/*"],
@@ -17,6 +19,6 @@
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src", "tests", "vite.config.ts", "playwright.config.ts"],
+  "include": ["src", "tests", "tools", "vite.config.ts", "playwright.config.ts"],
   "exclude": ["tests/lint-fixtures"]
 }

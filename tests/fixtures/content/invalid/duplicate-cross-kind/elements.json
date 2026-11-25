@@ -1,0 +1,11 @@
+[
+  {
+    "id": "elem_test_a",
+    "label": "Fixture A",
+    "active": true,
+    "color": "#112233",
+    "modifiers": {
+      "fixture": 1
+    }
+  }
+]

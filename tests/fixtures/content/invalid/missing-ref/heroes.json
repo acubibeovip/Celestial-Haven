@@ -1,0 +1,9 @@
+[
+  {
+    "id": "hero_test_a",
+    "template": "close",
+    "elementId": "elem_test_a",
+    "atlas": "fixture-atlas",
+    "portrait": "fixture-portrait"
+  }
+]

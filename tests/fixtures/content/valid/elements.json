@@ -1,0 +1,29 @@
+[
+  {
+    "id": "elem_test_a",
+    "label": "Fixture A",
+    "active": true,
+    "color": "#112233",
+    "modifiers": {
+      "fixture": 1
+    }
+  },
+  {
+    "id": "elem_test_b",
+    "label": "Fixture B",
+    "active": true,
+    "color": "#445566",
+    "modifiers": {
+      "fixture": 1
+    }
+  },
+  {
+    "id": "elem_test_c",
+    "label": "Fixture C",
+    "active": false,
+    "color": "#778899",
+    "modifiers": {
+      "fixture": 1
+    }
+  }
+]
