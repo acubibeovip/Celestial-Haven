@@ -1,0 +1,72 @@
+[
+  {
+    "id": "elem_thunder",
+    "nameKey": "element.thunder.name",
+    "active": false,
+    "color": "#FACC15",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_light",
+    "nameKey": "element.light.name",
+    "active": false,
+    "color": "#FFF4C2",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_ice",
+    "nameKey": "element.ice.name",
+    "active": false,
+    "color": "#A5F3FC",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_earth",
+    "nameKey": "element.earth.name",
+    "active": false,
+    "color": "#D4A373",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_wind",
+    "nameKey": "element.wind.name",
+    "active": false,
+    "color": "#5EEAD4",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_dark",
+    "nameKey": "element.dark.name",
+    "active": false,
+    "color": "#A78BFA",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_water",
+    "nameKey": "element.water.name",
+    "active": true,
+    "color": "#60A5FA",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_fire",
+    "nameKey": "element.fire.name",
+    "active": true,
+    "color": "#FB7185",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_astral",
+    "nameKey": "element.astral.name",
+    "active": false,
+    "color": "#F0ABFC",
+    "modifiers": {}
+  },
+  {
+    "id": "elem_nature",
+    "nameKey": "element.nature.name",
+    "active": true,
+    "color": "#86EFAC",
+    "modifiers": {}
+  }
+]

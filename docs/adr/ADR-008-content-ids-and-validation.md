@@ -10,12 +10,12 @@ Definition IDs match `^[a-z][a-z0-9_]{1,47}$` and are globally unique. Required 
 
 ## Schema location and shapes
 
-Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five supported files are arrays of strict definitions.
+Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`.
 
 | Kind | Fields chosen where the plan leaves the shape open |
 | --- | --- |
-| Elements | `label` is non-empty text, `active` is boolean, `color` is a six-digit hex string, and `modifiers` is a map from existing element IDs to finite non-negative numbers. Multiplier semantics are deferred to M4-01. |
-| Heroes | `atlas` and `portrait` are non-empty asset keys. |
+| Elements | `nameKey` references an English string, `active` is boolean, `color` is a six-digit hex string, and `modifiers` is a map from existing element IDs to finite non-negative numbers. Multiplier semantics are deferred to M4-01. |
+| Heroes | `nameKey` and `archetypeKey` reference English strings. `atlas` and `portrait` are non-empty asset keys. |
 | Items | `kind` and `icon` are non-empty strings. `price` is a non-negative integer. `stackMax` is 1–99. Stats and recipe backrefs are deferred. |
 | Recipes | `station` is a non-empty string. `inputs` and `outputs` are non-empty arrays of `{ itemId, quantity }`, with unique item IDs within each array. `requirement` is a non-empty string or null. |
 | Quests | `prereqs` and `next` are arrays of quest IDs. `objectives` contains `{ kind, count }`. `reward` contains `{ coins, items }`, with items using the recipe stack shape. `peacefulAlternative` is a non-empty string or null. |
@@ -31,3 +31,9 @@ The validator checks definition IDs, references from structurally valid entries,
 CI is deferred to a separate task under decision D5. A cross-kind duplicate also reports `ID_PREFIX` under decision D6 because the required prefixes are disjoint.
 
 Under decision D7, game content JSON lives in `src/content/data/`. Content code, including the validator and any future registry, lives outside the data directory.
+
+## D9 Player-facing strings
+
+Definition files use fields ending in `Key` for player-facing text. Each key reference must be present in `src/content/data/strings.en.json`. A missing entry reports `MISSING_REF` at the referring field. The element label is stored as a `nameKey` reference. Heroes carry `nameKey` and `archetypeKey` references.
+
+`strings.en.json` is a flat object. Keys match `^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$` and values are non-empty strings. An invalid object, key, or value reports `SCHEMA`. Unused keys are allowed for UI text. Other locales are deferred. Element and hero keys use the definition ID without its kind prefix in `element.<id>.name`, `hero.<id>.name`, and `hero.<id>.archetype`.

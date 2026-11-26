@@ -2,7 +2,7 @@ import { readdir, readFile, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { contentKinds, validateContent, type ValidationError } from '../src/content/validate.ts';
+import { contentFiles, contentKinds, validateContent, type ValidationError } from '../src/content/validate.ts';
 
 const defaultDirectory = 'src/content/data';
 const repositoryDataDirectory = fileURLToPath(new URL('../src/content/data', import.meta.url));
@@ -13,7 +13,7 @@ async function run(): Promise<number> {
   const files: Record<string, unknown> = Object.create(null);
   const present = new Set<string>();
   const errors: ValidationError[] = [];
-  const known = new Set<string>(contentKinds.map((kind) => `${kind}.json`));
+  const known = new Set<string>(Object.values(contentFiles));
 
   for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
     if (entry.isDirectory()) continue;
@@ -40,12 +40,17 @@ async function run(): Promise<number> {
   const result = validateContent(files);
   if (!result.ok) errors.push(...result.error);
   for (const kind of contentKinds) {
-    const file = `${kind}.json`;
-    const rows = files[file];
-    const count = Array.isArray(rows) ? rows.length : 'unavailable';
+    const file = contentFiles[kind];
+    const data = files[file];
+    let count: number | 'unavailable' = 'unavailable';
+    if (kind === 'strings') {
+      if (typeof data === 'object' && data !== null && !Array.isArray(data)) count = Object.keys(data).length;
+    } else if (Array.isArray(data)) {
+      count = data.length;
+    }
     console.log(`${kind}: ${present.has(file) ? count : '0 (absent)'}`);
   }
-  const absent = contentKinds.filter((kind) => !present.has(`${kind}.json`));
+  const absent = contentKinds.filter((kind) => !present.has(contentFiles[kind]));
   console.log(`Absent kinds: ${absent.join(', ') || 'none'}`);
 
   for (const { file, path, code, message } of errors) {

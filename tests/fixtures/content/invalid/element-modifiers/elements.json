@@ -1,11 +1,11 @@
 [
   {
     "id": "elem_test_a",
-    "label": "Fixture A",
     "active": true,
     "color": "#112233",
     "modifiers": {
       "banana": -5
-    }
+    },
+    "nameKey": "element.test_a.name"
   }
 ]

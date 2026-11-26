@@ -1,10 +1,12 @@
-import type { ZodType } from 'zod';
+import type { ZodError, ZodType } from 'zod';
 import { err, ok, type Result } from '../shared/result.ts';
 import { elementSchema } from './schema/element.ts';
 import { heroSchema } from './schema/hero.ts';
 import { itemSchema } from './schema/item.ts';
 import { recipeSchema } from './schema/recipe.ts';
 import { questSchema, type QuestDef } from './schema/quest.ts';
+
+import { stringsSchema } from './schema/strings.ts';
 
 const definitions = {
   elements: { prefix: 'elem_', schema: elementSchema },
@@ -14,8 +16,19 @@ const definitions = {
   quests: { prefix: 'q_', schema: questSchema },
 } as const;
 
-type Kind = keyof typeof definitions;
-export const contentKinds = Object.keys(definitions) as Kind[];
+type DefinitionKind = keyof typeof definitions;
+export const contentFiles = {
+  elements: 'elements.json',
+  heroes: 'heroes.json',
+  items: 'items.json',
+  recipes: 'recipes.json',
+  quests: 'quests.json',
+  strings: 'strings.en.json',
+} as const;
+
+type Kind = keyof typeof contentFiles;
+export const contentKinds = Object.keys(contentFiles) as Kind[];
+const knownFiles = new Set<string>(Object.values(contentFiles));
 
 export type Summary = {
   counts: Record<Kind, number>;
@@ -79,11 +92,10 @@ function checkQuestCycles(quests: Map<string, Located<QuestDef>>, errors: Valida
 
 export function validateContent(files: Readonly<Record<string, unknown>>): Result<Summary, ValidationError[]> {
   const errors: ValidationError[] = [];
-  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0 };
+  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0 };
   const absent: Kind[] = [];
-  const knownFiles = new Set<string>(contentKinds.map((kind) => `${kind}.json`));
   const allIds = new Map<string, { file: string; path: string }>();
-  const idsByKind: Record<Kind, Set<string>> = {
+  const idsByKind: Record<DefinitionKind, Set<string>> = {
     elements: new Set(), heroes: new Set(), items: new Set(), recipes: new Set(), quests: new Set(),
   };
 
@@ -93,8 +105,31 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     }
   }
 
-  function readKind<T>(kind: Kind, schema: ZodType<T>): Located<T>[] {
-    const file = `${kind}.json`;
+  function reportSchemaErrors(file: string, path: string, { issues }: ZodError): void {
+    for (const issue of issues) {
+      const paths = issue.code === 'unrecognized_keys'
+        ? issue.keys.map((key) => [...issue.path, key])
+        : [issue.path];
+      for (const segments of paths) {
+        errors.push({ file, path: issuePath(path, segments), code: 'SCHEMA', message: issue.message });
+      }
+    }
+  }
+
+  const stringsFile = contentFiles.strings;
+  let strings: Record<string, unknown> | undefined;
+  if (Object.hasOwn(files, stringsFile)) {
+    const source = files[stringsFile];
+    const parsed = stringsSchema.safeParse(source);
+    if (!parsed.success) reportSchemaErrors(stringsFile, '$', parsed.error);
+    if (isRecord(source)) {
+      strings = source;
+      counts.strings = Object.keys(strings).length;
+    }
+  }
+
+  function readKind<T extends object>(kind: DefinitionKind, schema: ZodType<T>): Located<T>[] {
+    const file = contentFiles[kind];
     if (!Object.hasOwn(files, file)) {
       absent.push(kind);
       return [];
@@ -112,15 +147,16 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
       const parsed = schema.safeParse(row);
       if (parsed.success) {
         entries.push({ value: parsed.data, path });
-      } else {
-        for (const issue of parsed.error.issues) {
-          const paths = issue.code === 'unrecognized_keys'
-            ? issue.keys.map((key) => [...issue.path, key])
-            : [issue.path];
-          for (const segments of paths) {
-            errors.push({ file, path: issuePath(path, segments), code: 'SCHEMA', message: issue.message });
+        for (const [field, key] of Object.entries(parsed.data)) {
+          if (field.endsWith('Key') && typeof key === 'string' && (!strings || !Object.hasOwn(strings, key))) {
+            errors.push({
+              file, path: issuePath(path, [field]), code: 'MISSING_REF',
+              message: `Unknown string key "${key}" in ${stringsFile}.`,
+            });
           }
         }
+      } else {
+        reportSchemaErrors(file, path, parsed.error);
       }
 
       if (!isRecord(row) || typeof row.id !== 'string') return;
@@ -154,8 +190,9 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
   readKind('items', definitions.items.schema);
   const recipes = readKind('recipes', definitions.recipes.schema);
   const quests = readKind('quests', definitions.quests.schema);
+  if (!Object.hasOwn(files, stringsFile)) absent.push('strings');
 
-  function checkRef(file: string, path: string, kind: Kind, id: string): void {
+  function checkRef(file: string, path: string, kind: DefinitionKind, id: string): void {
     if (!idsByKind[kind].has(id)) {
       errors.push({ file, path, code: 'MISSING_REF', message: `Unknown ID "${id}" in ${kind}.json.` });
     }
