@@ -4,6 +4,7 @@
     "kind": "fixture",
     "stackMax": 100,
     "icon": "test-a",
-    "price": 1
+    "price": 1,
+    "nameKey": "item.fixture_0.name"
   }
 ]

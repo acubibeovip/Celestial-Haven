@@ -43,7 +43,7 @@ async function run(): Promise<number> {
     const file = contentFiles[kind];
     const data = files[file];
     let count: number | 'unavailable' = 'unavailable';
-    if (kind === 'strings') {
+    if (kind === 'strings' || kind === 'templates') {
       if (typeof data === 'object' && data !== null && !Array.isArray(data)) count = Object.keys(data).length;
     } else if (Array.isArray(data)) {
       count = data.length;

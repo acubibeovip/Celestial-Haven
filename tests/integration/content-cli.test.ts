@@ -17,14 +17,14 @@ test('CLI exits zero for valid content and prints its counts', () => {
   expect(result.error).toBeUndefined();
   expect(result.status).toBe(0);
   expect(result.stderr).toBe('');
-  expect(result.stdout).toContain('elements: 3\nheroes: 2\nitems: 4\nrecipes: 2\nquests: 3\nstrings: 8\nAbsent kinds: none');
+  expect(result.stdout).toContain('elements: 3\nheroes: 2\nitems: 4\nrecipes: 2\nquests: 3\nstrings: 12\ntemplates: 0 (absent)\nAbsent kinds: templates');
 });
 
 test('CLI exits one for invalid content and prints each diagnostic', () => {
   const result = runCli(fileURLToPath(new URL('invalid/duplicate-cross-kind/', fixtures)));
   expect(result.error).toBeUndefined();
   expect(result.status).toBe(1);
-  expect(result.stdout).toContain('Absent kinds: heroes, recipes, quests');
+  expect(result.stdout).toContain('Absent kinds: heroes, recipes, quests, templates');
   expect(result.stderr).toContain('items.json:$[0].id [ID_PREFIX]');
   expect(result.stderr).toContain('items.json:$[0].id [DUPLICATE_ID]');
   expect(result.stderr).toContain('Content validation failed (2 errors).');

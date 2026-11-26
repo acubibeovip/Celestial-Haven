@@ -1,6 +1,1 @@
-export type Mode = 'peaceful' | 'adventure';
-
-export type NewGameRequest = {
-  heroId: string;
-  mode: Mode;
-};
+export type { Mode, NewGameRequest } from '@domain/player/types';

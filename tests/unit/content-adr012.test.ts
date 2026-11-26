@@ -1,0 +1,46 @@
+import { readFileSync } from 'node:fs';
+import { expect, test } from 'vitest';
+import { z } from 'zod';
+import { itemSchema } from '../../src/content/schema/item';
+import { templatesSchema } from '../../src/content/schema/template';
+
+const data = new URL('../../src/content/data/', import.meta.url);
+
+function readData(file: string): unknown {
+  return JSON.parse(readFileSync(new URL(file, data), 'utf8'));
+}
+
+test('real templates match ADR-012 base stats and the three starter gear mappings', () => {
+  expect(templatesSchema.parse(readData('templates.json'))).toEqual({
+    close: {
+      nameKey: 'ui.template.close',
+      base: { maxHp: 120, maxMana: 30, power: 12, guard: 10 },
+      starterGear: { mainHand: 'item_training_blade', body: 'item_traveler_tunic' },
+    },
+    ranged: {
+      nameKey: 'ui.template.ranged',
+      base: { maxHp: 90, maxMana: 50, power: 11, guard: 6 },
+      starterGear: { mainHand: 'item_willow_shortbow', body: 'item_traveler_tunic' },
+    },
+    support: {
+      nameKey: 'ui.template.support',
+      base: { maxHp: 100, maxMana: 70, power: 8, guard: 8 },
+      starterGear: { mainHand: 'item_lantern_focus', body: 'item_traveler_tunic' },
+    },
+  });
+});
+
+test('real starter gear matches ADR-012 slots, template restrictions, and bonuses', () => {
+  const items = z.array(itemSchema).parse(readData('items.json'));
+  expect(items.map(({ id, gear }) => [id, gear])).toEqual([
+    ['item_training_blade', { slot: 'mainHand', template: 'close', stats: { power: 3 } }],
+    ['item_willow_shortbow', { slot: 'mainHand', template: 'ranged', stats: { power: 3 } }],
+    ['item_lantern_focus', { slot: 'mainHand', template: 'support', stats: { power: 1, maxMana: 10 } }],
+    ['item_traveler_tunic', { slot: 'body', template: null, stats: { guard: 2, maxHp: 10 } }],
+  ]);
+  for (const { id, kind, stackMax, icon, price } of items) {
+    expect({ kind, stackMax, icon, price }).toEqual({
+      kind: 'gear', stackMax: 1, icon: `icon_${id.slice('item_'.length)}`, price: 0,
+    });
+  }
+});

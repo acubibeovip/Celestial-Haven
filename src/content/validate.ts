@@ -5,8 +5,8 @@ import { heroSchema } from './schema/hero.ts';
 import { itemSchema } from './schema/item.ts';
 import { recipeSchema } from './schema/recipe.ts';
 import { questSchema, type QuestDef } from './schema/quest.ts';
-
 import { stringsSchema } from './schema/strings.ts';
+import { templatesSchema } from './schema/template.ts';
 
 const definitions = {
   elements: { prefix: 'elem_', schema: elementSchema },
@@ -24,6 +24,7 @@ export const contentFiles = {
   recipes: 'recipes.json',
   quests: 'quests.json',
   strings: 'strings.en.json',
+  templates: 'templates.json',
 } as const;
 
 type Kind = keyof typeof contentFiles;
@@ -92,7 +93,7 @@ function checkQuestCycles(quests: Map<string, Located<QuestDef>>, errors: Valida
 
 export function validateContent(files: Readonly<Record<string, unknown>>): Result<Summary, ValidationError[]> {
   const errors: ValidationError[] = [];
-  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0 };
+  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0 };
   const absent: Kind[] = [];
   const allIds = new Map<string, { file: string; path: string }>();
   const idsByKind: Record<DefinitionKind, Set<string>> = {
@@ -128,6 +129,26 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     }
   }
 
+  function checkStringRefs(file: string, path: string, value: unknown): void {
+    if (Array.isArray(value)) {
+      value.forEach((child: unknown, index) => checkStringRefs(file, issuePath(path, [index]), child));
+    } else if (isRecord(value)) {
+      for (const [field, child] of Object.entries(value)) {
+        const fieldPath = issuePath(path, [field]);
+        if (field.endsWith('Key') && typeof child === 'string') {
+          if (!strings || !Object.hasOwn(strings, child)) {
+            errors.push({
+              file, path: fieldPath, code: 'MISSING_REF',
+              message: `Unknown string key "${child}" in ${stringsFile}.`,
+            });
+          }
+        } else {
+          checkStringRefs(file, fieldPath, child);
+        }
+      }
+    }
+  }
+
   function readKind<T extends object>(kind: DefinitionKind, schema: ZodType<T>): Located<T>[] {
     const file = contentFiles[kind];
     if (!Object.hasOwn(files, file)) {
@@ -147,14 +168,7 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
       const parsed = schema.safeParse(row);
       if (parsed.success) {
         entries.push({ value: parsed.data, path });
-        for (const [field, key] of Object.entries(parsed.data)) {
-          if (field.endsWith('Key') && typeof key === 'string' && (!strings || !Object.hasOwn(strings, key))) {
-            errors.push({
-              file, path: issuePath(path, [field]), code: 'MISSING_REF',
-              message: `Unknown string key "${key}" in ${stringsFile}.`,
-            });
-          }
-        }
+        checkStringRefs(file, path, parsed.data);
       } else {
         reportSchemaErrors(file, path, parsed.error);
       }
@@ -187,7 +201,7 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
 
   readKind('elements', definitions.elements.schema);
   const heroes = readKind('heroes', definitions.heroes.schema);
-  readKind('items', definitions.items.schema);
+  const items = readKind('items', definitions.items.schema);
   const recipes = readKind('recipes', definitions.recipes.schema);
   const quests = readKind('quests', definitions.quests.schema);
   if (!Object.hasOwn(files, stringsFile)) absent.push('strings');
@@ -196,6 +210,35 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     if (!idsByKind[kind].has(id)) {
       errors.push({ file, path, code: 'MISSING_REF', message: `Unknown ID "${id}" in ${kind}.json.` });
     }
+  }
+
+  const templatesFile = contentFiles.templates;
+  if (Object.hasOwn(files, templatesFile)) {
+    const parsed = templatesSchema.safeParse(files[templatesFile]);
+    if (!parsed.success) {
+      reportSchemaErrors(templatesFile, '$', parsed.error);
+    } else {
+      counts.templates = Object.keys(parsed.data).length;
+      checkStringRefs(templatesFile, '$', parsed.data);
+      const itemsById = new Map(items.map(({ value }) => [value.id, value]));
+      for (const [templateId, template] of Object.entries(parsed.data)) {
+        for (const [slot, id] of Object.entries(template.starterGear)) {
+          const path = issuePath('$', [templateId, 'starterGear', slot]);
+          const item = itemsById.get(id);
+          if (!item) {
+            checkRef(templatesFile, path, 'items', id);
+          } else if (item.kind !== 'gear' || item.gear?.slot !== slot ||
+            (item.gear.template !== null && item.gear.template !== templateId)) {
+            errors.push({
+              file: templatesFile, path, code: 'SCHEMA',
+              message: `Starter item "${id}" must be gear for slot "${slot}" and compatible with template "${templateId}".`,
+            });
+          }
+        }
+      }
+    }
+  } else {
+    absent.push('templates');
   }
 
   // Check references independently so an invalid multiplier cannot hide an unknown ID.
