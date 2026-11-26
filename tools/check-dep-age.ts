@@ -1,36 +1,41 @@
 import { readFile } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
-import { isTooRecent, lockedPackages, publication, type LockedPackage } from './dep-age.ts';
+import { isTooRecent, lockedPackages, publication, shouldRetryRegistry, type LockedPackage } from './dep-age.ts';
 
 const concurrency = 6;
-const maxAttempts = 4;
 
-function retryDelay(response: Response, attempt: number): number {
-  const header = response.headers.get('retry-after');
-  if (header !== null) {
+function retryDelay(attempt: number, response?: Response): number {
+  const header = response?.headers.get('retry-after');
+  if (header != null) {
     const seconds = Number(header);
     const wait = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(header) - Date.now();
     if (Number.isFinite(wait)) return Math.min(30_000, Math.max(0, wait));
   }
-  return 500 * 2 ** attempt;
+  return 500 * 2 ** (attempt - 1);
 }
 
 async function fetchMetadata(name: string): Promise<unknown> {
   const url = `https://registry.npmjs.org/${encodeURIComponent(name)}`;
 
-  for (let attempt = 0; ; attempt++) {
-    const response = await fetch(url, {
-      headers: { accept: 'application/json' },
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (response.ok) return response.json();
+  for (let attempt = 1; ; attempt++) {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: { accept: 'application/json' },
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (response.ok) return await response.json();
+    } catch (error) {
+      if (!shouldRetryRegistry(attempt, error)) throw error;
+      await delay(retryDelay(attempt));
+      continue;
+    }
 
     await response.body?.cancel();
-    const retryable = response.status === 429 || (response.status >= 500 && response.status < 600);
-    if (attempt + 1 === maxAttempts || !retryable) {
+    if (!shouldRetryRegistry(attempt, response.status)) {
       throw new Error(`Registry returned HTTP ${response.status}.`);
     }
-    await delay(retryDelay(response, attempt));
+    await delay(retryDelay(attempt, response));
   }
 }
 

@@ -40,3 +40,16 @@ export function publication(pkg: LockedPackage, metadata: unknown): PublishedPac
 export function isTooRecent(pkg: PublishedPackage, nowMs: number): boolean {
   return nowMs - Date.parse(pkg.publishedAt) < minimumAgeMs;
 }
+
+const maxAttempts = 4;
+
+export function shouldRetryRegistry(attempt: number, failure: unknown): boolean {
+  if (attempt >= maxAttempts) return false;
+  if (typeof failure === 'number') {
+    return failure === 429 || (failure >= 500 && failure < 600);
+  }
+  return failure instanceof TypeError || (failure instanceof Error && (
+    failure.name === 'TimeoutError' || failure.name === 'AbortError' ||
+    ('code' in failure && failure.code === 'ECONNRESET')
+  ));
+}

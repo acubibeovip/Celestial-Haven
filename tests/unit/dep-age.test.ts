@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { isTooRecent, lockedPackages, publication } from '../../tools/dep-age.ts';
+import { isTooRecent, lockedPackages, publication, shouldRetryRegistry } from '../../tools/dep-age.ts';
 
 const resolved = 'https://registry.npmjs.org/example/-/example-1.0.0.tgz';
 
@@ -43,4 +43,17 @@ test('fails closed for missing or invalid registry timestamps', () => {
   const pkg = { name: 'example', version: '1.0.0' };
   expect(() => publication(pkg, { time: { '2.0.0': '2026-11-12' } })).toThrow('publish time');
   expect(() => publication(pkg, { time: { '1.0.0': 'invalid' } })).toThrow('publish time');
+});
+
+test('retries transient HTTP and network errors before the attempt cap', () => {
+  const reset = Object.assign(new Error('Connection reset'), { code: 'ECONNRESET' });
+  const failures = [429, 503, new TypeError('fetch failed'), reset, new DOMException('Timed out', 'TimeoutError')];
+
+  for (const failure of failures) {
+    expect(shouldRetryRegistry(1, failure)).toBe(true);
+    expect(shouldRetryRegistry(3, failure)).toBe(true);
+    expect(shouldRetryRegistry(4, failure)).toBe(false);
+  }
+  expect(shouldRetryRegistry(1, 404)).toBe(false);
+  expect(shouldRetryRegistry(1, new SyntaxError('Malformed registry JSON'))).toBe(false);
 });

@@ -20,4 +20,10 @@ The dates are the releases' GitHub API `published_at` values. Full commit SHAs w
 
 ## npm lockfile gate
 
-The checker reads all non-root lockfile entries, deduplicates identical package names and versions, and verifies their timestamps against the public npm registry. This includes transitive and platform-specific optional packages. Each version must be at least 14 full days old when the check starts. An unsupported lockfile entry, missing timestamp, or failed registry request fails the gate. The tool retries HTTP 429 and 5xx responses and bounds concurrent requests.
+The checker reads all non-root lockfile entries, deduplicates identical package names and versions, and verifies their timestamps against the public npm registry. This includes transitive and platform-specific optional packages. Each version must be at least 14 full days old when the check starts. An unsupported lockfile entry, missing timestamp, or failed registry request fails the gate. The tool retries HTTP 429, HTTP 5xx, and transient network failures such as timeouts and bounds concurrent requests.
+
+## D8 Lockfile re-resolution
+
+For every dependency addition or update, update the intended direct pins, then resolve a fresh lockfile with `npm install --package-lock-only --before=<UTC timestamp 14 days before resolution>`. Resolve from the updated manifest without a pre-existing lockfile so npm reconsiders every version. Run `npm run check:deps` and commit the resulting lockfile. The gate applies to every locked version.
+
+PR #4 applied D8 with `--before=2026-11-12T15:50:35Z` UTC, preserving every direct pin.

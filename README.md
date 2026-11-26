@@ -33,3 +33,5 @@ Asset validation and itch.io packaging are deferred to M6-03 and M7-01, respecti
 GitHub Actions runs install, typecheck, lint, tests, build, and the Chromium smoke test on every pull request and push to `main`. A failed smoke test uploads its Playwright HTML report.
 
 The separate dependency publish-age job runs on pushes to `main` and on pull requests that change `package.json` or `package-lock.json`. Run `npm run check:deps` locally from the repository root to verify the complete lockfile against the npm registry.
+
+For a dependency add or update, edit the intended exact pins in `package.json` and resolve a fresh lockfile from that manifest with `npm install --package-lock-only --before=<UTC timestamp 14 days ago>`. Start the resolution in a directory without an existing lockfile so npm reconsiders every version. Run `npm run check:deps` against the resulting lockfile and commit it. [ADR-009](docs/adr/ADR-009-ci.md)
