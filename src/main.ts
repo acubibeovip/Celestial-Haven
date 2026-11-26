@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
-import { createContentRegistry, readBundledContent } from './application/ContentRegistry';
+import { createContentRegistry } from './application/ContentRegistry';
+import { createNewGameCatalog } from './application/createNewGameCatalog';
+import { LocalSession } from './application/LocalSession';
+import { createReadyView } from './application/readyView';
+import { readBundledContent } from './infrastructure/content/readBundledContent';
 import { Boot } from './game/scenes/Boot';
 import { mountMenu, showContentError } from './ui/menu';
 import './ui/menu.css';
@@ -11,7 +15,15 @@ const files = readBundledContent();
 const registry = createContentRegistry(files);
 
 if (registry.ok) {
-  mountMenu(root, registry.value, matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const content = registry.value;
+  const catalog = createNewGameCatalog(content);
+  const session = new LocalSession(catalog);
+  mountMenu(root, {
+    registry: content,
+    session,
+    readyView: (state) => createReadyView(state, content, catalog),
+    initialReducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+  });
 
   new Phaser.Game({
     // Temporary for smoke-test pixel sampling. Decide the renderer in M6-03 after measuring FPS.

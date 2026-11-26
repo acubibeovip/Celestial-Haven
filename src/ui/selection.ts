@@ -1,5 +1,5 @@
 import type { ContentRegistry } from '../application/ContentRegistry';
-import type { Mode, NewGameRequest } from '../application/NewGameRequest';
+import type { Mode, NewGameRequest } from '../application/GameSession';
 
 export type Selection = {
   focusedIndex: number;

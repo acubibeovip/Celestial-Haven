@@ -40,7 +40,21 @@ async function expectTouchTargets(frame: FrameLocator) {
   }
 }
 
-test('Title opens the 10-card roster and keyboard selection reaches the temporary summary', async ({ page, baseURL }) => {
+async function expectReady(
+  frame: FrameLocator,
+  { hero, mode, weapon, stats }: { hero: string; mode: string; weapon: string; stats: number[] },
+) {
+  await expect(frame.getByRole('heading', { name: 'Ready' })).toBeFocused();
+  await expect(frame.getByRole('heading', { name: hero })).toBeVisible();
+  await expect(frame.getByText('Temporary screen while the world is in development.', { exact: false })).toBeVisible();
+  await expect(frame.locator('.ready-identity dd')).toHaveText([mode, '1']);
+  await expect(frame.locator('.ready-group li')).toHaveText([weapon, "Traveler's Tunic"]);
+  await expect(frame.locator('.ready-group dt')).toHaveText(['Max HP', 'Max mana', 'Power', 'Guard']);
+  await expect(frame.locator('.ready-group dd')).toHaveText(stats.map(String));
+  await expect(frame.getByRole('button', { name: 'Back' })).toHaveCount(0);
+}
+
+test('keyboard selection starts a ranged hero and shows Ready from session state', async ({ page, baseURL }, testInfo) => {
   const { frame, errors } = await openMenu(page, baseURL);
   await expect(frame.getByRole('button')).toHaveText(['New Game', 'Settings', 'Credits']);
   await expectTouchTargets(frame);
@@ -80,26 +94,27 @@ test('Title opens the 10-card roster and keyboard selection reaches the temporar
   await expect(mode).toBeChecked();
   await expect(confirm).toBeEnabled();
   await confirm.press('Enter');
-  await expect(frame.getByRole('heading', { name: 'Selection summary' })).toBeVisible();
-  await expect(frame.getByText('hero_frostfox_sorceress', { exact: true })).toBeVisible();
-  await expect(frame.getByText('Peaceful', { exact: true })).toBeVisible();
-  await expectTouchTargets(frame);
+  await expectReady(frame, {
+    hero: 'Frostfox Sorceress', mode: 'Peaceful', weapon: 'Willow Shortbow', stats: [100, 50, 14, 8],
+  });
+  await page.screenshot({ path: testInfo.outputPath('ready-desktop.png') });
   await page.keyboard.press('Escape');
-  await expect(frame.getByRole('heading', { name: 'Choose your hero' })).toBeFocused();
-  await expect(cards.nth(2)).toHaveAttribute('aria-pressed', 'true');
-  await page.keyboard.press('Escape');
-  await expect(frame.getByRole('button', { name: 'New Game' })).toBeFocused();
+  await expect(frame.getByRole('heading', { name: 'Ready' })).toBeVisible();
+  await page.reload();
+  await expect(frame.getByRole('heading', { name: 'Celestial Haven' })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-for (const { orientation, width, height, columns } of [
-  { orientation: 'landscape', width: 844, height: 390, columns: 5 },
-  { orientation: 'portrait', width: 390, height: 844, columns: 2 },
+for (const { orientation, width, height, columns, hero, weapon, stats } of [
+  { orientation: 'landscape', width: 844, height: 390, columns: 5,
+    hero: 'Storm Monk', weapon: 'Training Blade', stats: [130, 30, 15, 12] },
+  { orientation: 'portrait', width: 390, height: 844, columns: 2,
+    hero: 'Aurora Priestess', weapon: 'Lantern Focus', stats: [110, 80, 9, 10] },
 ]) {
   test.describe(`mobile ${orientation}`, () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width, height } });
 
-    test('taps a hero and mode, then confirms with 44px targets', async ({ page, baseURL }) => {
+    test(`touch selection starts ${hero} and shows equipped gear and stats`, async ({ page, baseURL }, testInfo) => {
       const { frame, errors } = await openMenu(page, baseURL);
       await expectTouchTargets(frame);
       await frame.getByRole('button', { name: 'New Game' }).tap();
@@ -114,16 +129,14 @@ for (const { orientation, width, height, columns } of [
       await expect(confirm).toBeDisabled();
       await frame.getByRole('radio', { name: 'Adventure' }).tap();
       await expect(confirm).toBeDisabled();
-      await frame.getByRole('button', { name: 'Starfall Archer', exact: true }).tap();
+      await frame.getByRole('button', { name: hero, exact: true }).tap();
       const preview = frame.getByRole('complementary', { name: 'Hero preview' });
-      await expect(preview.getByRole('heading')).toHaveText('Starfall Archer');
+      await expect(preview.getByRole('heading')).toHaveText(hero);
       await confirm.tap();
-      await expect(frame.getByRole('heading', { name: 'Selection summary' })).toBeVisible();
-      await expect(frame.getByText('hero_starfall_archer', { exact: true })).toBeVisible();
-      await expect(frame.getByText('Adventure', { exact: true })).toBeVisible();
-      await expectTouchTargets(frame);
-      await frame.getByRole('button', { name: 'Back' }).tap();
-      await expect(frame.getByRole('heading', { name: 'Choose your hero' })).toBeVisible();
+      await expectReady(frame, { hero, mode: 'Adventure', weapon, stats });
+      if (orientation === 'portrait') {
+        await page.screenshot({ path: testInfo.outputPath('ready-mobile-portrait.png') });
+      }
       expect(errors).toEqual([]);
     });
   });

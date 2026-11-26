@@ -31,4 +31,19 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    files: ['src/ui/**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          regex: '(^|/)(@domain|domain)(/|$)',
+          message: 'UI must access game state through application contracts.',
+        }],
+      }],
+      'no-restricted-syntax': ['error', {
+        selector: 'ImportExpression > Literal[value=/(^|\\/)(@domain|domain)(\\/|$)/], TSImportType Literal[value=/(^|\\/)(@domain|domain)(\\/|$)/]',
+        message: 'UI must access game state through application contracts.',
+      }],
+    },
+  },
 );
