@@ -25,7 +25,7 @@ Objective counts and item quantities are positive safe integers. Prices and rewa
 
 ## Validator contract
 
-`validateContent(files)` accepts a filename-keyed record of parsed JSON and returns `Result<Summary, ValidationError[]>`. A successful summary includes counts for every kind and lists absent kinds separately from present empty arrays. An error has `file`, a JSON path rooted at `$`, `code`, and `message`. Codes are `SCHEMA`, `ID_FORMAT`, `ID_PREFIX`, `DUPLICATE_ID`, `MISSING_REF`, `QUEST_CYCLE`, `UNKNOWN_FILE`, and `PARSE` (CLI JSON syntax errors).
+`validateContent(files)` accepts a filename-keyed record of parsed JSON and returns `Result<Summary, ValidationError[]>`. A successful summary includes counts for every kind and lists absent kinds separately from present empty arrays. An error has `file`, a JSON path rooted at `$`, `code`, and `message`. Codes are `SCHEMA`, `ID_FORMAT`, `ID_PREFIX`, `DUPLICATE_ID`, `MISSING_REF`, `QUEST_CYCLE`, `UNKNOWN_FILE`, `PARSE` (CLI JSON syntax errors), and `UNREACHABLE` (maps).
 
 The validator checks definition IDs, references from structurally valid entries, modifier keys even when their values are invalid, and cycles in quest prerequisites. The CLI checks top-level files against the exact supported filenames, including case and extension. The CLI defaults to `src/content/data/` and skips the repository's `.gitkeep` marker there. It reports counts and absent kinds, and exits 1 on an error. `npm run build` invokes it first. Production content may be absent at M0-05. Game data for these kinds is decided in later tasks.
 
@@ -40,3 +40,7 @@ Definition files use fields ending in `Key` for player-facing text. The validato
 `strings.en.json` is a flat object. Keys match `^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$` and values are non-empty strings. An invalid object, key, or value reports `SCHEMA`. Unused keys are allowed for UI text. Other locales are deferred. Element and hero keys use the definition ID without its kind prefix in `element.<id>.name`, `hero.<id>.name`, and `hero.<id>.archetype`.
 
 Gear data records its slot, a template ID or null, and at least one non-negative integer stat among `power`, `guard`, `maxHp`, and `maxMana`. Starting content and state semantics are recorded in [ADR-012](ADR-012-templates-and-starter-gear.md).
+
+## Map validation
+
+`validateMap(mapId, json, knownMaps)` accepts a Tiled map and an index of known map IDs to spawn names. `npm run validate:maps` indexes the maps under `public/maps/` (or `--dir`) before it validates each file. It uses `SCHEMA` for invalid structure or marker placement, `MISSING_REF` for unknown exit targets, and `UNREACHABLE` when a walkable marker cannot be reached by four-neighbour flood fill from the default spawn. The CLI also reports `PARSE` for malformed JSON and `UNKNOWN_FILE` for unsupported file types. See [ADR-014](ADR-014-map-conventions.md).

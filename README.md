@@ -22,8 +22,10 @@ npx playwright install chromium
 | `npm run lint` | Lint the source tree and enforce the domain import and global rules. |
 | `npm test` | Run unit tests and the domain lint regression tests. |
 | `npm run validate:content` | Validate game content JSON in `src/content/data/`. Pass `-- --dir <directory>` to check another directory. |
-| `npm run build` | Validate content, then build the static game into `dist/`. |
+| `npm run validate:maps` | Validate Tiled JSON in `public/maps/` or a directory passed with `-- --dir <directory>`. |
+| `npm run build` | Validate content and maps, then build the static game into `dist/`. |
 | `npm run preview` | Serve the built game for local inspection. |
+| `npm run test:prototype` | Test the dev-only map prototype and capture both sprite cell sizes. |
 | `npm run test:e2e` | Test the built game in Chromium. Run `npm run build` first. |
 
 Asset validation and itch.io packaging are deferred to M6-03 and M7-01, respectively.

@@ -1,0 +1,116 @@
+{
+  "type": "map",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "infinite": false,
+  "width": 4,
+  "height": 3,
+  "tilewidth": 32,
+  "tileheight": 32,
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",
+      "type": "tilelayer",
+      "width": 4,
+      "height": 3,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "opacity": 1,
+      "data": [
+        1, 1, 1, 1,
+        1, 1, 1, 1,
+        1, 1, 1, 1
+      ]
+    },
+    {
+      "id": 2,
+      "name": "decor",
+      "type": "tilelayer",
+      "width": 4,
+      "height": 3,
+      "x": 0,
+      "y": 0,
+      "visible": true,
+      "opacity": 1,
+      "data": [
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+      ]
+    },
+    {
+      "id": 3,
+      "name": "collision",
+      "type": "tilelayer",
+      "width": 4,
+      "height": 3,
+      "x": 0,
+      "y": 0,
+      "visible": false,
+      "opacity": 1,
+      "data": [
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+      ]
+    },
+    {
+      "id": 4,
+      "name": "markers",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 1,
+          "name": "default",
+          "type": "",
+          "point": true,
+          "x": 16,
+          "y": 16,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "spawn"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "name": "npc",
+          "type": "",
+          "point": true,
+          "x": 80,
+          "y": 48,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "npc"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "placeholder",
+      "tilewidth": 32,
+      "tileheight": 32,
+      "tilecount": 4,
+      "columns": 4
+    }
+  ],
+  "nextlayerid": 5,
+  "nextobjectid": 2,
+  "version": "1.10",
+  "tiledversion": "1.11.2"
+}

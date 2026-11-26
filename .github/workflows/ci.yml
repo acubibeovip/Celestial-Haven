@@ -42,6 +42,17 @@ jobs:
           name: ready-screenshots
           path: test-results/**/ready-*.png
           if-no-files-found: error
+      - name: Check the dev map prototype and capture both cell sizes
+        id: map-prototype
+        if: github.event_name == 'pull_request'
+        run: npm run test:prototype
+      - name: Upload map prototype screenshots
+        if: ${{ github.event_name == 'pull_request' && steps.map-prototype.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: map-prototype-screenshots
+          path: test-results/prototype/**/map-prototype-cell-*.png
+          if-no-files-found: error
       - name: Upload Playwright report
         if: ${{ failure() && steps.e2e.outcome == 'failure' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -19,6 +19,6 @@
       "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["src", "tests", "tools", "vite.config.ts", "playwright.config.ts"],
+  "include": ["src", "tests", "tools", "vite.config.ts", "playwright*.config.ts"],
   "exclude": ["tests/lint-fixtures"]
 }

@@ -1,0 +1,31 @@
+.map-prototype {
+  width: min(100%, 704px);
+  margin-inline: auto;
+  padding: clamp(12px, 3vw, 24px);
+  border: 1px solid #53465d;
+  border-radius: 14px;
+  background: #211b31;
+}
+
+.map-prototype h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); }
+.prototype-controls { margin-top: 10px; color: #e5dbc8; }
+
+.prototype-status {
+  display: block;
+  margin-block: 7px 14px;
+  color: #bef9e3;
+  font: 0.85rem/1.5 ui-monospace, monospace;
+}
+
+.prototype-stage {
+  width: min(100%, 640px);
+  margin-inline: auto;
+  aspect-ratio: 4 / 3;
+  background: #121824;
+  overflow: hidden;
+}
+
+.prototype-stage canvas {
+  display: block;
+  image-rendering: pixelated;
+}
