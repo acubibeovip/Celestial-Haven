@@ -1,6 +1,6 @@
 # ADR-009 GitHub Actions CI and dependency publish age
 
-Status: Proposed
+Status: Accepted (2026-11-26, reviewed in PR #4)
 
 Date: 2026-11-26
 
