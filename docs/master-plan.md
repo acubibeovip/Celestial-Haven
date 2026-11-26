@@ -375,7 +375,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 [T] 10–12 tuần là mục tiêu lập kế hoạch, không phải cam kết. Có thể kéo dài nếu art/QA chưa đạt. Mỗi task ghi commit, test và quyết định scope. Không tick sẵn.
 
 ### M0 — Scope / art audit
-- [ ] M0-01: Chốt 4 map, 10 hero/3 template, hai route, content budget; cập nhật ADR.
+- [x] M0-01: Chốt 4 map, 10 hero/3 template, hai route, content budget; cập nhật ADR.
 - [ ] M0-02: Audit 10 hero top-down, 8 loài, boss; ghi missing frames và license.
 - [ ] M0-03: Làm tile prototype 32px + collision, kiểm tra tỷ lệ sprite.
 - [x] M0-04: Tạo repo, pin stack, lint/typecheck/test/build scripts.
