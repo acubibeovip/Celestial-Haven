@@ -4,13 +4,17 @@
     "template": "close",
     "elementId": "elem_test_a",
     "atlas": "fixture-atlas",
-    "portrait": "fixture-portrait"
+    "portrait": "fixture-portrait",
+    "nameKey": "hero.test_a.name",
+    "archetypeKey": "hero.test_a.archetype"
   },
   {
     "id": "hero_test_b",
     "template": "support",
     "elementId": "elem_test_b",
     "atlas": "fixture-atlas",
-    "portrait": "fixture-portrait"
+    "portrait": "fixture-portrait",
+    "nameKey": "hero.test_b.name",
+    "archetypeKey": "hero.test_b.archetype"
   }
 ]

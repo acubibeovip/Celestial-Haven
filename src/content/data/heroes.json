@@ -1,0 +1,92 @@
+[
+  {
+    "id": "hero_storm_monk",
+    "nameKey": "hero.storm_monk.name",
+    "archetypeKey": "hero.storm_monk.archetype",
+    "template": "close",
+    "elementId": "elem_thunder",
+    "atlas": "atlas_storm_monk",
+    "portrait": "portrait_storm_monk"
+  },
+  {
+    "id": "hero_aurora_priestess",
+    "nameKey": "hero.aurora_priestess.name",
+    "archetypeKey": "hero.aurora_priestess.archetype",
+    "template": "support",
+    "elementId": "elem_light",
+    "atlas": "atlas_aurora_priestess",
+    "portrait": "portrait_aurora_priestess"
+  },
+  {
+    "id": "hero_frostfox_sorceress",
+    "nameKey": "hero.frostfox_sorceress.name",
+    "archetypeKey": "hero.frostfox_sorceress.archetype",
+    "template": "ranged",
+    "elementId": "elem_ice",
+    "atlas": "atlas_frostfox_sorceress",
+    "portrait": "portrait_frostfox_sorceress"
+  },
+  {
+    "id": "hero_earthshaker_sentinel",
+    "nameKey": "hero.earthshaker_sentinel.name",
+    "archetypeKey": "hero.earthshaker_sentinel.archetype",
+    "template": "close",
+    "elementId": "elem_earth",
+    "atlas": "atlas_earthshaker_sentinel",
+    "portrait": "portrait_earthshaker_sentinel"
+  },
+  {
+    "id": "hero_galeblade_wanderer",
+    "nameKey": "hero.galeblade_wanderer.name",
+    "archetypeKey": "hero.galeblade_wanderer.archetype",
+    "template": "close",
+    "elementId": "elem_wind",
+    "atlas": "atlas_galeblade_wanderer",
+    "portrait": "portrait_galeblade_wanderer"
+  },
+  {
+    "id": "hero_eclipse_reaper",
+    "nameKey": "hero.eclipse_reaper.name",
+    "archetypeKey": "hero.eclipse_reaper.archetype",
+    "template": "close",
+    "elementId": "elem_dark",
+    "atlas": "atlas_eclipse_reaper",
+    "portrait": "portrait_eclipse_reaper"
+  },
+  {
+    "id": "hero_tidebound_dragon_general",
+    "nameKey": "hero.tidebound_dragon_general.name",
+    "archetypeKey": "hero.tidebound_dragon_general.archetype",
+    "template": "close",
+    "elementId": "elem_water",
+    "atlas": "atlas_tidebound_dragon_general",
+    "portrait": "portrait_tidebound_dragon_general"
+  },
+  {
+    "id": "hero_phoenix_blade_dancer",
+    "nameKey": "hero.phoenix_blade_dancer.name",
+    "archetypeKey": "hero.phoenix_blade_dancer.archetype",
+    "template": "close",
+    "elementId": "elem_fire",
+    "atlas": "atlas_phoenix_blade_dancer",
+    "portrait": "portrait_phoenix_blade_dancer"
+  },
+  {
+    "id": "hero_starfall_archer",
+    "nameKey": "hero.starfall_archer.name",
+    "archetypeKey": "hero.starfall_archer.archetype",
+    "template": "ranged",
+    "elementId": "elem_astral",
+    "atlas": "atlas_starfall_archer",
+    "portrait": "portrait_starfall_archer"
+  },
+  {
+    "id": "hero_spirit_beast_warden",
+    "nameKey": "hero.spirit_beast_warden.name",
+    "archetypeKey": "hero.spirit_beast_warden.archetype",
+    "template": "support",
+    "elementId": "elem_nature",
+    "atlas": "atlas_spirit_beast_warden",
+    "portrait": "portrait_spirit_beast_warden"
+  }
+]

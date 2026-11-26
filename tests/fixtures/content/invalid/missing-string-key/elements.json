@@ -1,0 +1,9 @@
+[
+  {
+    "id": "elem_test_a",
+    "active": true,
+    "color": "#112233",
+    "modifiers": {},
+    "nameKey": "element.test_a.name"
+  }
+]

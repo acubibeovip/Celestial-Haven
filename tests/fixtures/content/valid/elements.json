@@ -1,27 +1,27 @@
 [
   {
     "id": "elem_test_a",
-    "label": "Fixture A",
     "active": true,
     "color": "#112233",
     "modifiers": {
       "elem_test_b": 1.5
-    }
+    },
+    "nameKey": "element.test_a.name"
   },
   {
     "id": "elem_test_b",
-    "label": "Fixture B",
     "active": true,
     "color": "#445566",
     "modifiers": {
       "elem_test_a": 0
-    }
+    },
+    "nameKey": "element.test_b.name"
   },
   {
     "id": "elem_test_c",
-    "label": "Fixture C",
     "active": false,
     "color": "#778899",
-    "modifiers": {}
+    "modifiers": {},
+    "nameKey": "element.test_c.name"
   }
 ]
