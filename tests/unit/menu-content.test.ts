@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
-import { createContentRegistry, readBundledContent } from '../../src/application/ContentRegistry';
+import { createContentRegistry } from '../../src/application/ContentRegistry';
+import { readBundledContent } from '../../src/infrastructure/content/readBundledContent';
 import { heroViewModels } from '../../src/ui/selection';
 
 test('blocks runtime content with a dangling hero translation', () => {
@@ -18,6 +19,8 @@ test('blocks an absent roster or a missing UI translation', () => {
     expect.objectContaining({ file: 'heroes.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'elements.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'strings.en.json', code: 'SCHEMA' }),
+    expect.objectContaining({ file: 'items.json', code: 'SCHEMA' }),
+    expect.objectContaining({ file: 'templates.json', code: 'SCHEMA' }),
   ] });
 
   const files = readBundledContent();
