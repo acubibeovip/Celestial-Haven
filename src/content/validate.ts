@@ -26,11 +26,15 @@ export type ValidationError = {
   file: string;
   path: string;
   code: 'SCHEMA' | 'ID_FORMAT' | 'ID_PREFIX' | 'DUPLICATE_ID' | 'MISSING_REF' |
-    'QUEST_CYCLE' | 'UNKNOWN_FILE';
+    'QUEST_CYCLE' | 'UNKNOWN_FILE' | 'PARSE';
   message: string;
 };
 
 type Located<T> = { value: T; path: string };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 function issuePath(row: string, segments: PropertyKey[]): string {
   return segments.reduce<string>((path, key) => {
@@ -119,7 +123,7 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
         }
       }
 
-      if (typeof row !== 'object' || row === null || !('id' in row) || typeof row.id !== 'string') return;
+      if (!isRecord(row) || typeof row.id !== 'string') return;
       const id = row.id;
       const idPath = `${path}.id`;
       const prefix = definitions[kind].prefix;
@@ -155,6 +159,17 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     if (!idsByKind[kind].has(id)) {
       errors.push({ file, path, code: 'MISSING_REF', message: `Unknown ID "${id}" in ${kind}.json.` });
     }
+  }
+
+  // Check references independently so an invalid multiplier cannot hide an unknown ID.
+  const elementRows = files['elements.json'];
+  if (Array.isArray(elementRows) && Object.hasOwn(files, 'elements.json')) {
+    elementRows.forEach((row: unknown, index) => {
+      if (!isRecord(row) || !isRecord(row.modifiers)) return;
+      for (const key of Object.keys(row.modifiers)) {
+        checkRef('elements.json', issuePath(`$[${index}]`, ['modifiers', key]), 'elements', key);
+      }
+    });
   }
 
   for (const { value, path } of heroes) {

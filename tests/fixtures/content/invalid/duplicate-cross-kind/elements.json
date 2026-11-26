@@ -4,8 +4,6 @@
     "label": "Fixture A",
     "active": true,
     "color": "#112233",
-    "modifiers": {
-      "fixture": 1
-    }
+    "modifiers": {}
   }
 ]

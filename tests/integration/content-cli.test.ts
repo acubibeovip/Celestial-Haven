@@ -34,12 +34,19 @@ test('CLI continues after malformed JSON and reports other files', () => {
   const dir = mkdtempSync(join(tmpdir(), 'celestial-content-'));
   try {
     writeFileSync(join(dir, 'items.json'), '[');
-    writeFileSync(join(dir, 'extra.json'), '[]');
+    writeFileSync(join(dir, 'Items.json'), '[]');
+    writeFileSync(join(dir, 'heroes.json5'), '[]');
+    writeFileSync(join(dir, 'notes.txt'), '');
+    writeFileSync(join(dir, 'validate.ts'), '');
     const result = runCli(dir);
     expect(result.status).toBe(1);
     expect(result.stdout).toContain('items: unavailable');
-    expect(result.stderr).toContain('items.json:$ [SCHEMA]');
-    expect(result.stderr).toContain('extra.json:$ [UNKNOWN_FILE]');
+    expect(result.stderr).toContain('items.json:$ [PARSE]');
+    expect(result.stderr).toContain('Items.json:$ [UNKNOWN_FILE]');
+    expect(result.stderr).toContain('heroes.json5:$ [UNKNOWN_FILE]');
+    expect(result.stderr).toContain('notes.txt:$ [UNKNOWN_FILE]');
+    expect(result.stderr).toContain('validate.ts:$ [UNKNOWN_FILE]');
+    expect(result.stderr).toContain('Content validation failed (5 errors).');
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

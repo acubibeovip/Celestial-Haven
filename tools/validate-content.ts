@@ -1,18 +1,22 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { contentKinds, validateContent, type ValidationError } from '../src/content/validate.ts';
 
 async function run(): Promise<number> {
   const { values } = parseArgs({ options: { dir: { type: 'string', default: 'src/content' } } });
-  const directory = values.dir;
+  const directory = await realpath(values.dir);
+  const validatorSource = fileURLToPath(new URL('../src/content/validate.ts', import.meta.url));
   const files: Record<string, unknown> = Object.create(null);
   const present = new Set<string>();
   const errors: ValidationError[] = [];
   const known = new Set<string>(contentKinds.map((kind) => `${kind}.json`));
 
   for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (entry.isDirectory() || !entry.name.endsWith('.json')) continue;
+    const path = join(directory, entry.name);
+    // The default content directory also contains the validator's own source file.
+    if (entry.isDirectory() || path === validatorSource) continue;
     const file = entry.name;
     present.add(file);
     if (!known.has(file)) {
@@ -20,9 +24,14 @@ async function run(): Promise<number> {
       continue;
     }
     try {
-      files[file] = JSON.parse(await readFile(join(directory, file), 'utf8')) as unknown;
+      files[file] = JSON.parse(await readFile(path, 'utf8')) as unknown;
     } catch (error) {
-      errors.push({ file, path: '$', code: 'SCHEMA', message: error instanceof Error ? error.message : String(error) });
+      errors.push({
+        file,
+        path: '$',
+        code: error instanceof SyntaxError ? 'PARSE' : 'SCHEMA',
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -41,7 +50,7 @@ async function run(): Promise<number> {
     console.error(`${file}:${path} [${code}] ${message}`);
   }
   if (errors.length) {
-    console.error(`Content validation failed (${errors.length} errors).`);
+    console.error(`Content validation failed (${errors.length} ${errors.length === 1 ? 'error' : 'errors'}).`);
     return 1;
   }
 

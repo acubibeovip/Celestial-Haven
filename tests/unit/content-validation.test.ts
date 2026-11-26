@@ -35,6 +35,19 @@ const invalidCases: Record<string, Diagnostic[]> = {
   'quest-self-cycle': [['QUEST_CYCLE', 'quests.json', '$[0].prereqs[0]']],
   'unknown-file': [['UNKNOWN_FILE', 'extra.json', '$']],
   'negative-quantity': [['SCHEMA', 'recipes.json', '$[0].inputs[0].quantity']],
+  'empty-recipe': [
+    ['SCHEMA', 'recipes.json', '$[0].inputs'],
+    ['SCHEMA', 'recipes.json', '$[0].outputs'],
+  ],
+  'duplicate-recipe-stacks': [
+    ['SCHEMA', 'recipes.json', '$[0].inputs[1].itemId'],
+    ['SCHEMA', 'recipes.json', '$[0].outputs[1].itemId'],
+  ],
+  'zero-objective': [['SCHEMA', 'quests.json', '$[0].objectives[0].count']],
+  'element-modifiers': [
+    ['SCHEMA', 'elements.json', '$[0].modifiers.banana'],
+    ['MISSING_REF', 'elements.json', '$[0].modifiers.banana'],
+  ],
   'noninteger-price': [['SCHEMA', 'items.json', '$[0].price']],
   'stackmax-100': [['SCHEMA', 'items.json', '$[0].stackMax']],
   'unknown-key': [['SCHEMA', 'quests.json', '$[0].reward.unexpected']],

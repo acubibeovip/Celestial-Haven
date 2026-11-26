@@ -6,7 +6,7 @@ export const elementSchema = z.strictObject({
   label: text,
   active: z.boolean(),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
-  modifiers: z.record(text, z.number()),
+  modifiers: z.record(text, z.number().nonnegative()),
 });
 
 export type ElementDef = z.infer<typeof elementSchema>;
