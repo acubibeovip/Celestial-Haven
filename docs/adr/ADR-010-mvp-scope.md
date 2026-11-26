@@ -4,7 +4,7 @@ Status: Accepted (owner-approved 2026-11-26)
 
 ## 1. Maps
 
-Four areas use 32 × 32 tiles and a top-down 3/4 view.
+Four areas use 32 × 32 pixel tiles and a top-down 3/4 view.
 
 | ID | Size (tiles) | Notes |
 | --- | --- | --- |
@@ -69,7 +69,7 @@ Apply scope cuts in the order defined in [master plan §4](../master-plan.md#4-p
 
 ## 6. Asset gate
 
-A hero that has yet to pass the M0-02 top-down audit remains selectable in development builds with a clearly marked placeholder. Public release materials claim only audited heroes. If fewer than ten heroes pass, record a blocker and update the store copy to state the audited count explicitly.
+A hero that has yet to pass the M0-02 top-down audit remains selectable in development builds with a clearly marked placeholder. Public release materials claim only audited heroes. If fewer than ten heroes pass, record a blocker and update the store copy to avoid implying that ten heroes are available.
 
 ## Out of scope
 
