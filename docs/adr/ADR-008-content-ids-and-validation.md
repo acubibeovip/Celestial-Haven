@@ -1,6 +1,6 @@
 # ADR-008 Content IDs and validation
 
-Status: Proposed
+Status: Accepted (2026-11-26, reviewed in PR #3)
 
 Date: 2026-11-25
 
@@ -26,6 +26,8 @@ Objective counts and item quantities are positive safe integers. Prices and rewa
 
 `validateContent(files)` accepts a filename-keyed record of parsed JSON and returns `Result<Summary, ValidationError[]>`. A successful summary includes counts for every kind and lists absent kinds separately from present empty arrays. An error has `file`, a JSON path rooted at `$`, `code`, and `message`. Codes are `SCHEMA`, `ID_FORMAT`, `ID_PREFIX`, `DUPLICATE_ID`, `MISSING_REF`, `QUEST_CYCLE`, `UNKNOWN_FILE`, and `PARSE` (CLI JSON syntax errors).
 
-The validator checks definition IDs, references from structurally valid entries, modifier keys even when their values are invalid, and cycles in quest prerequisites. The CLI checks top-level files against the exact supported filenames, including case and extension. The validator source file is excluded at its repository path. It reports counts and absent kinds, and exits 1 on an error. `npm run build` invokes it first. Production content may be absent at M0-05. Game data for these kinds is decided in later tasks.
+The validator checks definition IDs, references from structurally valid entries, modifier keys even when their values are invalid, and cycles in quest prerequisites. The CLI checks top-level files against the exact supported filenames, including case and extension. The CLI defaults to `src/content/data/` and skips the repository's `.gitkeep` marker there. It reports counts and absent kinds, and exits 1 on an error. `npm run build` invokes it first. Production content may be absent at M0-05. Game data for these kinds is decided in later tasks.
 
 CI is deferred to a separate task under decision D5. A cross-kind duplicate also reports `ID_PREFIX` under decision D6 because the required prefixes are disjoint.
+
+Under decision D7, game content JSON lives in `src/content/data/`. Content code, including the validator and any future registry, lives outside the data directory.

@@ -4,19 +4,21 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { contentKinds, validateContent, type ValidationError } from '../src/content/validate.ts';
 
+const defaultDirectory = 'src/content/data';
+const repositoryDataDirectory = fileURLToPath(new URL('../src/content/data', import.meta.url));
+
 async function run(): Promise<number> {
-  const { values } = parseArgs({ options: { dir: { type: 'string', default: 'src/content' } } });
+  const { values } = parseArgs({ options: { dir: { type: 'string', default: defaultDirectory } } });
   const directory = await realpath(values.dir);
-  const validatorSource = fileURLToPath(new URL('../src/content/validate.ts', import.meta.url));
   const files: Record<string, unknown> = Object.create(null);
   const present = new Set<string>();
   const errors: ValidationError[] = [];
   const known = new Set<string>(contentKinds.map((kind) => `${kind}.json`));
 
   for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
-    const path = join(directory, entry.name);
-    // The default content directory also contains the validator's own source file.
-    if (entry.isDirectory() || path === validatorSource) continue;
+    if (entry.isDirectory()) continue;
+    // Git needs a marker to retain the empty repository data directory.
+    if (directory === repositoryDataDirectory && entry.isFile() && entry.name === '.gitkeep') continue;
     const file = entry.name;
     present.add(file);
     if (!known.has(file)) {
@@ -24,7 +26,7 @@ async function run(): Promise<number> {
       continue;
     }
     try {
-      files[file] = JSON.parse(await readFile(path, 'utf8')) as unknown;
+      files[file] = JSON.parse(await readFile(join(directory, file), 'utf8')) as unknown;
     } catch (error) {
       errors.push({
         file,

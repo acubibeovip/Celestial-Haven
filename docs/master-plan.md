@@ -379,7 +379,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [ ] M0-02: Audit 10 hero top-down, 8 loài, boss; ghi missing frames và license.
 - [ ] M0-03: Làm tile prototype 32px + collision, kiểm tra tỷ lệ sprite.
 - [x] M0-04: Tạo repo, pin stack, lint/typecheck/test/build scripts.
-- [ ] M0-05: Tạo schema validator, ID convention, fixture; CI nếu cần.
+- [x] M0-05: Tạo schema validator, ID convention, fixture; CI nếu cần.
 - [ ] M0-06: Nghiên cứu benchmark RES-01..04; phân biệt dữ liệu và giả thuyết.
 
 ### M1 — Character selection / walking
