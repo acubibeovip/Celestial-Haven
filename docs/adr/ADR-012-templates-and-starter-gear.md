@@ -1,6 +1,6 @@
 # ADR-012 Templates and starter gear
 
-Status: Proposed
+Status: Accepted (numbers remain provisional until M4-01)
 
 The three v0.1 gameplay templates share a starter body item and have distinct starter main-hand items. These stat values are provisional. M4-01 handles balance.
 
