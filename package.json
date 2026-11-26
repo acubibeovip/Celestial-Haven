@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "build": "npm run validate:content && vite build",
     "preview": "vite preview",
-    "validate:content": "node tools/validate-content.ts"
+    "validate:content": "node tools/validate-content.ts",
+    "check:deps": "node tools/check-dep-age.ts"
   },
   "dependencies": {
     "phaser": "4.2.1",
