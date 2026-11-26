@@ -1,0 +1,9 @@
+[
+  {
+    "id": "test_item",
+    "kind": "fixture",
+    "stackMax": 10,
+    "icon": "test-a",
+    "price": 1
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "elem_test_a",
+    "kind": "fixture",
+    "stackMax": 10,
+    "icon": "test-a",
+    "price": 1
+  }
+]

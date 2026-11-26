@@ -1,0 +1,38 @@
+[
+  {
+    "id": "q_test_a",
+    "prereqs": [
+      "q_test_b"
+    ],
+    "objectives": [
+      {
+        "kind": "fixture",
+        "count": 1
+      }
+    ],
+    "reward": {
+      "coins": 0,
+      "items": []
+    },
+    "next": [],
+    "peacefulAlternative": null
+  },
+  {
+    "id": "q_test_b",
+    "prereqs": [
+      "q_test_a"
+    ],
+    "objectives": [
+      {
+        "kind": "fixture",
+        "count": 1
+      }
+    ],
+    "reward": {
+      "coins": 0,
+      "items": []
+    },
+    "next": [],
+    "peacefulAlternative": null
+  }
+]

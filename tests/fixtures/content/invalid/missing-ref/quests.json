@@ -1,0 +1,27 @@
+[
+  {
+    "id": "q_test_a",
+    "prereqs": [
+      "q_test_b"
+    ],
+    "objectives": [
+      {
+        "kind": "fixture",
+        "count": 1
+      }
+    ],
+    "reward": {
+      "coins": 0,
+      "items": [
+        {
+          "itemId": "item_test_d",
+          "quantity": 1
+        }
+      ]
+    },
+    "next": [
+      "q_test_c"
+    ],
+    "peacefulAlternative": null
+  }
+]

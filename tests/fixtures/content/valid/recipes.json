@@ -1,0 +1,36 @@
+[
+  {
+    "id": "recipe_test_a",
+    "station": "fixture",
+    "inputs": [
+      {
+        "itemId": "item_test_a",
+        "quantity": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_test_b",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_test_b",
+    "station": "fixture",
+    "inputs": [
+      {
+        "itemId": "item_test_c",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_test_d",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  }
+]
