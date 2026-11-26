@@ -383,7 +383,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [ ] M0-06: Nghiên cứu benchmark RES-01..04; phân biệt dữ liệu và giả thuyết.
 
 ### M1 — Character selection / walking
-- [ ] M1-01: Boot/title/settings, 10 card và hero preview.
+- [x] M1-01: Boot/title/settings, 10 card và hero preview.
 - [ ] M1-02: New Game state, mode, 3 template, starter gear.
 - [ ] M1-03: Input desktop/touch, movement/collision/camera.
 - [ ] M1-04: 4 map transition markers, map prototype chạy được.
