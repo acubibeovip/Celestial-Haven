@@ -10,13 +10,14 @@ Definition IDs match `^[a-z][a-z0-9_]{1,47}$` and are globally unique. Required 
 
 ## Schema location and shapes
 
-Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`.
+Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`. The templates kind uses an object with exactly the three v0.1 template keys in `templates.json`.
 
 | Kind | Fields chosen where the plan leaves the shape open |
 | --- | --- |
 | Elements | `nameKey` references an English string, `active` is boolean, `color` is a six-digit hex string, and `modifiers` is a map from existing element IDs to finite non-negative numbers. Multiplier semantics are deferred to M4-01. |
 | Heroes | `nameKey` and `archetypeKey` reference English strings. `atlas` and `portrait` are non-empty asset keys. |
-| Items | `kind` and `icon` are non-empty strings. `price` is a non-negative integer. `stackMax` is 1–99. Stats and recipe backrefs are deferred. |
+| Items | `nameKey` references an English string. `kind` and `icon` are non-empty strings. `price` is a non-negative integer. `stackMax` is 1–99. Gear requires a `gear` object and `stackMax: 1`. Other kinds forbid that object. Recipe backrefs are deferred. |
+| Templates | `close`, `ranged`, and `support` each have a `nameKey`, positive integer base stats, and `mainHand` and `body` starter item IDs. Starter references must point to gear in the matching slot whose template matches or is null. |
 | Recipes | `station` is a non-empty string. `inputs` and `outputs` are non-empty arrays of `{ itemId, quantity }`, with unique item IDs within each array. `requirement` is a non-empty string or null. |
 | Quests | `prereqs` and `next` are arrays of quest IDs. `objectives` contains `{ kind, count }`. `reward` contains `{ coins, items }`, with items using the recipe stack shape. `peacefulAlternative` is a non-empty string or null. |
 
@@ -34,6 +35,8 @@ Under decision D7, game content JSON lives in `src/content/data/`. Content code,
 
 ## D9 Player-facing strings
 
-Definition files use fields ending in `Key` for player-facing text. Each key reference must be present in `src/content/data/strings.en.json`. A missing entry reports `MISSING_REF` at the referring field. The element label is stored as a `nameKey` reference. Heroes carry `nameKey` and `archetypeKey` references.
+Definition files use fields ending in `Key` for player-facing text. The validator checks these fields recursively within schema-valid content. Each key reference must be present in `src/content/data/strings.en.json`. A missing entry reports `MISSING_REF` at the referring field. The element label is stored as a `nameKey` reference. Heroes carry `nameKey` and `archetypeKey` references.
 
 `strings.en.json` is a flat object. Keys match `^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$` and values are non-empty strings. An invalid object, key, or value reports `SCHEMA`. Unused keys are allowed for UI text. Other locales are deferred. Element and hero keys use the definition ID without its kind prefix in `element.<id>.name`, `hero.<id>.name`, and `hero.<id>.archetype`.
+
+Gear data records its slot, a template ID or null, and at least one non-negative integer stat among `power`, `guard`, `maxHp`, and `maxMana`. Starting content and state semantics are recorded in [ADR-012](ADR-012-templates-and-starter-gear.md).

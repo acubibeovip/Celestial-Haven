@@ -52,5 +52,9 @@
   "ui.summary.temporary": "Temporary screen. Your selection is ready for New Game.",
   "ui.summary.hero_id": "Hero ID",
   "ui.summary.mode": "Mode",
-  "ui.content_error": "Unable to load game content"
+  "ui.content_error": "Unable to load game content",
+  "item.training_blade.name": "Training Blade",
+  "item.willow_shortbow.name": "Willow Shortbow",
+  "item.lantern_focus.name": "Lantern Focus",
+  "item.traveler_tunic.name": "Traveler's Tunic"
 }

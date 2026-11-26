@@ -1,3 +1,4 @@
 {
-  "element.test_a.name": "Fixture A"
+  "element.test_a.name": "Fixture A",
+  "item.fixture_0.name": "Fixture Item 1"
 }

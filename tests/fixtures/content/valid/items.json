@@ -4,27 +4,31 @@
     "kind": "fixture",
     "stackMax": 10,
     "icon": "test-a",
-    "price": 1
+    "price": 1,
+    "nameKey": "item.fixture_0.name"
   },
   {
     "id": "item_test_b",
     "kind": "fixture",
     "stackMax": 10,
     "icon": "test-b",
-    "price": 1
+    "price": 1,
+    "nameKey": "item.fixture_1.name"
   },
   {
     "id": "item_test_c",
     "kind": "fixture",
     "stackMax": 10,
     "icon": "test-c",
-    "price": 1
+    "price": 1,
+    "nameKey": "item.fixture_2.name"
   },
   {
     "id": "item_test_d",
     "kind": "fixture",
     "stackMax": 10,
     "icon": "test-d",
-    "price": 1
+    "price": 1,
+    "nameKey": "item.fixture_3.name"
   }
 ]

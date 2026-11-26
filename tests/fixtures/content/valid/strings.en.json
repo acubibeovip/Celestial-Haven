@@ -6,5 +6,9 @@
   "hero.test_a.name": "Fixture Hero",
   "hero.test_b.archetype": "Fixture Role",
   "hero.test_b.name": "Fixture Hero",
-  "ui.unused": "Unused by data"
+  "ui.unused": "Unused by data",
+  "item.fixture_0.name": "Fixture Item 1",
+  "item.fixture_1.name": "Fixture Item 2",
+  "item.fixture_2.name": "Fixture Item 3",
+  "item.fixture_3.name": "Fixture Item 4"
 }

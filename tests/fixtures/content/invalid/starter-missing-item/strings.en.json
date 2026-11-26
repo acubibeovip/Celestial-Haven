@@ -1,0 +1,9 @@
+{
+  "item.lantern_focus.name": "Lantern Focus",
+  "item.training_blade.name": "Training Blade",
+  "item.traveler_tunic.name": "Traveler's Tunic",
+  "item.willow_shortbow.name": "Willow Shortbow",
+  "ui.template.close": "Close",
+  "ui.template.ranged": "Ranged",
+  "ui.template.support": "Support"
+}
