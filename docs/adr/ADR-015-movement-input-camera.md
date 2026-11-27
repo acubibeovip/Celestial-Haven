@@ -1,6 +1,6 @@
 # ADR-015 Movement, input, and camera
 
-Status: Proposed
+Status: Accepted (2026-11-27, reviewed in PR #11)
 
 ## D23 — Spawn placement
 
