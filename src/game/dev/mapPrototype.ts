@@ -1,15 +1,24 @@
 import Phaser from 'phaser';
 import { mapSchema, TILE_SIZE } from '../../content/schema/map';
+import {
+  PLAYER_HEIGHT,
+  PLAYER_WIDTH,
+  spawnPosition,
+  stepMovement,
+  type Position,
+} from '../../domain/world/movement';
+import { tiledCollisionGrid } from '../../infrastructure/maps/tiledCollisionGrid';
+import { advanceFixedStep, createFixedStepState, FIXED_STEP_MS } from '../../shared/fixedStep';
+import { InputAdapter } from '../input/InputAdapter';
 import source from './prototype-map.json';
 import './mapPrototype.css';
 
 const map = mapSchema.parse(source);
 const width = map.width * TILE_SIZE;
 const height = map.height * TILE_SIZE;
-const footWidth = 20;
-const footHeight = 12;
 const [ground, decor, collision, markers] = map.layers;
 const start = markers.objects.find((marker) => marker.name === 'default');
+const domainGrid = tiledCollisionGrid(map);
 
 function tileKey(index: number): string {
   return `placeholder-tile-${index}`;
@@ -41,14 +50,14 @@ function makeTileTextures(scene: Phaser.Scene): void {
 export function startMapPrototype(root: HTMLElement): void {
   const spawn = start;
   if (!spawn) throw new Error('Prototype map has no default spawn.');
-  const { x: spawnX, y: spawnY } = spawn;
+  const initialFeet = spawnPosition(Math.floor(spawn.x / TILE_SIZE), Math.floor(spawn.y / TILE_SIZE));
   const heading = document.createElement('h1');
   heading.textContent = 'Tile-scale prototype';
   const screen = document.createElement('section');
   screen.className = 'map-prototype';
   const controls = document.createElement('p');
   controls.className = 'prototype-controls';
-  controls.textContent = 'G grid · C collision · S cell 48 / 64 · B feet box · Click or tap to place';
+  controls.textContent = 'WASD / arrows / joystick move · G grid · C collision · S cell 48 / 64 · B feet box · Click or tap to teleport';
   const status = document.createElement('output');
   status.className = 'prototype-status';
   const stage = document.createElement('div');
@@ -84,20 +93,27 @@ export function startMapPrototype(root: HTMLElement): void {
 
     const sprite = this.add.graphics().setDepth(3);
     const feetBox = this.add.graphics().setDepth(4).setVisible(false);
-    let feet = { x: spawnX, y: spawnY };
+    let feet: Position = initialFeet;
+    let previousFeet: Position = feet;
     let cellSize = 48;
+    let fixedStep = createFixedStepState();
+    const input = new InputAdapter(stage);
 
-    function drawHero(): void {
-      const { x, y } = feet;
+    function drawHero(renderPosition: Position = feet): void {
+      const { x, y } = renderPosition;
       // The cell and hero both use the feet as a bottom-center pivot.
       sprite.clear()
-        .lineStyle(1, 0xf4d090, 0.75).strokeRect(x - cellSize / 2, y - cellSize, cellSize, cellSize)
-        .fillStyle(0xf4d090, 0.88).fillRect(x - cellSize / 4, y - cellSize + 4, cellSize / 2, cellSize - 4)
-        .fillStyle(0xfff3d7).fillCircle(x, y, 2);
+        .lineStyle(1, 0xf4d090, 0.75).strokeRect(-cellSize / 2, -cellSize, cellSize, cellSize)
+        .fillStyle(0xf4d090, 0.88).fillRect(-cellSize / 4, -cellSize + 4, cellSize / 2, cellSize - 4)
+        .fillStyle(0xfff3d7).fillCircle(0, 0, 2)
+        .setPosition(x, y);
       feetBox.clear()
-        .fillStyle(0x65ffcb, 0.28).fillRect(x - footWidth / 2, y - footHeight / 2, footWidth, footHeight)
-        .lineStyle(2, 0x65ffcb).strokeRect(x - footWidth / 2, y - footHeight / 2, footWidth, footHeight);
-      status.textContent = `Cell ${cellSize} px · Feet ${x}, ${y} · Grid ${grid.visible ? 'on' : 'off'} · Collision ${solids.visible ? 'on' : 'off'} · Box ${feetBox.visible ? 'on' : 'off'}`;
+        .fillStyle(0x65ffcb, 0.28).fillRect(-PLAYER_WIDTH / 2, -PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
+        .lineStyle(2, 0x65ffcb).strokeRect(-PLAYER_WIDTH / 2, -PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT)
+        .setPosition(x, y);
+      status.dataset.feetX = String(feet.x);
+      status.dataset.feetY = String(feet.y);
+      status.textContent = `Cell ${cellSize} px · Feet ${Math.round(feet.x)}, ${Math.round(feet.y)} · Grid ${grid.visible ? 'on' : 'off'} · Collision ${solids.visible ? 'on' : 'off'} · Box ${feetBox.visible ? 'on' : 'off'}`;
     }
 
     function toggle(event: KeyboardEvent): void {
@@ -113,30 +129,54 @@ export function startMapPrototype(root: HTMLElement): void {
     }
 
     function place(pointer: Phaser.Input.Pointer): void {
-      const x = Math.floor(pointer.x / TILE_SIZE);
-      const y = Math.floor(pointer.y / TILE_SIZE);
+      const x = Math.floor(pointer.worldX / TILE_SIZE);
+      const y = Math.floor(pointer.worldY / TILE_SIZE);
       if (x < 0 || x >= map.width || y < 0 || y >= map.height || collision.data[y * map.width + x] !== 0) return;
-      feet = { x: (x + 0.5) * TILE_SIZE, y: (y + 0.5) * TILE_SIZE };
+      feet = spawnPosition(x, y);
+      previousFeet = feet;
       drawHero();
     }
 
+    const onVisibilityChange = (): void => {
+      if (document.hidden) fixedStep = advanceFixedStep(fixedStep, 0, true).state;
+    };
+
     window.addEventListener('keydown', toggle);
+    document.addEventListener('visibilitychange', onVisibilityChange);
     this.input.on('pointerdown', place);
     this.events.once('shutdown', () => {
       window.removeEventListener('keydown', toggle);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       this.input.off('pointerdown', place);
+      input.destroy();
     });
+    this.cameras.main.setBounds(0, 0, width, height).startFollow(sprite, true, 1, 1);
+    this.cameras.main.roundPixels = true;
     drawHero();
+
+    this.events.on('update', (_time: number, delta: number) => {
+      const result = advanceFixedStep(fixedStep, delta, document.hidden);
+      fixedStep = result.state;
+      for (let index = 0; index < result.steps; index++) {
+        previousFeet = feet;
+        feet = stepMovement(feet, input.getIntent(), domainGrid, FIXED_STEP_MS);
+      }
+      const alpha = fixedStep.accumulatorMs / FIXED_STEP_MS;
+      drawHero({
+        x: previousFeet.x + (feet.x - previousFeet.x) * alpha,
+        y: previousFeet.y + (feet.y - previousFeet.y) * alpha,
+      });
+    });
   }
 
   new Phaser.Game({
     type: Phaser.CANVAS,
     parent: stage,
-    width,
-    height,
+    width: 480,
+    height: 270,
     pixelArt: true,
     backgroundColor: '#121824',
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 480, height: 270 },
     scene: { key: 'M0_03A_MAP_PROTOTYPE_DEV_ONLY', create },
   });
 }
