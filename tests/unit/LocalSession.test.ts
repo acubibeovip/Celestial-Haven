@@ -14,7 +14,7 @@ const catalog = createNewGameCatalog(registry);
 const loaded = loadWorldMaps(readBundledMaps());
 if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
 const maps = loaded.value;
-const initialLocation = { mapId: 'map_starbrook_village', x: 144, y: 280 };
+const initialLocation = { mapId: 'map_starbrook_village', x: 784, y: 280 };
 const modes: Mode[] = ['peaceful', 'adventure'];
 const start = { type: 'NewGame', heroId: 'hero_storm_monk', mode: 'peaceful' } as const;
 
@@ -149,14 +149,14 @@ test('EnterExit commits the destination before MapChanged and the round trip ret
   expect(listener).toHaveBeenCalledExactlyOnceWith({ type: 'MapChanged', mapId: 'map_farm' });
   expect(listener.mock.results[0]?.value).toBe(session.snapshot());
   expect(listener.mock.results[0]?.value).toMatchObject({
-    phase: 'playing', player: { location: { mapId: 'map_farm', x: 336, y: 280 } },
+    phase: 'playing', player: { location: { mapId: 'map_farm', x: 112, y: 280 } },
   });
   expect(before).toMatchObject({ phase: 'playing', player: { location: initialLocation } });
 
   expect(session.dispatch({ type: 'EnterExit', exitName: 'to_village' }).ok).toBe(true);
   expect(listener).toHaveBeenCalledTimes(2);
   expect(session.snapshot()).toMatchObject({
-    phase: 'playing', player: { location: { mapId: 'map_starbrook_village', x: 272, y: 280 } },
+    phase: 'playing', player: { location: { mapId: 'map_starbrook_village', x: 1168, y: 280 } },
   });
   expect(isFrozenTree(session.snapshot())).toBe(true);
 });

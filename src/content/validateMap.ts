@@ -102,8 +102,8 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
   const localSpawns = spawnNames(markers);
   const seenSpawns = new Set<string>();
   const seenExits = new Set<string>();
-  const exitTiles = new Set(markers.filter((marker) => property(marker, 'type', '').value === 'exit')
-    .map(({ x, y }) => `${Math.floor(x / TILE_SIZE)},${Math.floor(y / TILE_SIZE)}`));
+  const exitTiles = markers.filter((marker) => property(marker, 'type', '').value === 'exit')
+    .map(({ x, y }) => ({ x: Math.floor(x / TILE_SIZE), y: Math.floor(y / TILE_SIZE) }));
   const walkableMarkers: { path: string; tile: number }[] = [];
   const objectsPath = '$.layers[3].objects';
   let defaultTile: number | undefined;
@@ -149,8 +149,12 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
       issue(path, 'Marker must be within map bounds.');
       return;
     }
-    if (type.value === 'spawn' && exitTiles.has(`${x},${y}`)) {
-      issue(path, 'A spawn may not share a tile with an exit.', 'SPAWN_ON_EXIT');
+    if (type.value === 'spawn') {
+      if (exitTiles.some((tile) => tile.x === x && tile.y === y)) {
+        issue(path, 'A spawn may not share a tile with an exit.', 'SPAWN_ON_EXIT');
+      } else if (exitTiles.some((tile) => Math.max(Math.abs(tile.x - x), Math.abs(tile.y - y)) < 3)) {
+        issue(path, 'A spawn must be at least three tiles from every exit, including diagonally.', 'SPAWN_NEAR_EXIT');
+      }
     }
     if (collision.length !== cellCount) return;
     const tile = y * width + x;

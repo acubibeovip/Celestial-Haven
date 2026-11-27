@@ -12,7 +12,7 @@
 #.......................#####..........#
 #......................................#
 #...:::::::::::::::::::::::::::::::::..#
-#...:ES:S:::::::::::::::::::::::::SE:..#
+E::S::::S:::::::::::::::::::::::::::S::E
 #...:::::::::::::::::::::::::::::::::..#
 #............:::........::.............#
 #............:::........::.............#
@@ -34,8 +34,8 @@
 ########################################
 
 ; Markers in row-major order for each symbol. spawn NAME / exit NAME TARGET_MAP TARGET_SPAWN.
-spawn from_whisperwood
-spawn default
 spawn from_star_shrine
-exit to_whisperwood map_whisperwood from_crystal_hollow
+spawn default
+spawn from_whisperwood
 exit to_star_shrine map_star_shrine from_crystal_hollow
+exit to_whisperwood map_whisperwood from_crystal_hollow

@@ -118,7 +118,7 @@ test('keyboard selection keeps arrow focus and walks Village to Farm and back', 
   const busy = frame.locator('#game[aria-busy="true"]');
   await page.keyboard.down('ArrowRight');
   try {
-    await expect(map).toHaveText('Farm');
+    await expect(map).toHaveText('Farm', { timeout: 10_000 });
     await expect(frame.locator('#game')).toHaveAttribute('data-test-fade-observed', 'true');
   } finally {
     await page.keyboard.up('ArrowRight');
@@ -176,7 +176,7 @@ for (const { orientation, width, height, columns, hero } of [
         try {
           await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
           await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 50, y }] });
-          await expect(frame.getByTestId('map-name')).toHaveText('Farm');
+          await expect(frame.getByTestId('map-name')).toHaveText('Farm', { timeout: 10_000 });
         } finally {
           await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
           await touch.detach();
@@ -199,7 +199,7 @@ test('reduced motion reaches Farm without entering the fade state', async ({ pag
 
   await page.keyboard.down('ArrowRight');
   try {
-    await expect(frame.getByTestId('map-name')).toHaveText('Farm');
+    await expect(frame.getByTestId('map-name')).toHaveText('Farm', { timeout: 10_000 });
   } finally {
     await page.keyboard.up('ArrowRight');
   }

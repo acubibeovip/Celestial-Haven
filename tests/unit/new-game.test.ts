@@ -48,7 +48,7 @@ test('content-inferred types are assignable to domain-owned interfaces', () => {
   expectTypeOf<ItemDef>().toExtend<ItemInfo>();
 });
 
-const initialLocation = Object.freeze({ mapId: 'map_starbrook_village', x: 144, y: 280 });
+const initialLocation = Object.freeze({ mapId: 'map_starbrook_village', x: 784, y: 280 });
 
 test.each(heroes.flatMap(({ id, template }) => modes.map((mode) => ({ id, mode, template }))))(
   'creates the $template starter state for $id in $mode',

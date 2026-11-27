@@ -9,4 +9,6 @@ Run `npm run validate:maps` from the repository root. To validate a map set in a
 
 For the scale prototype, run `npm run dev` and open the dev URL with `?proto`. Click or tap a walkable tile to place the hero. Press **G** for grid, **C** for solid tiles, **S** to swap 48/64 px sprite cells, and **B** for the 20 × 12 px feet box. The cell comparison is temporary, pending the real-art check in M0-03b.
 
-For generated blockouts, edit the ASCII layout and exit table in `tools/blockouts/`, then run `npm run generate:maps`. CI checks the generated output with `npm run check:maps`. To replace a blockout with Tiled-authored JSON, remove that map’s ASCII file in the same change. A spawn and an exit cannot occupy the same tile.
+For generated blockouts, edit the ASCII layout and exit table in `tools/blockouts/`, then run `npm run generate:maps`. CI checks the generated output with `npm run check:maps`. To replace a blockout with Tiled-authored JSON, remove that map’s ASCII file in the same change. Keep each spawn at least three tiles from every exit by Chebyshev distance (the larger of the horizontal and vertical tile distances). Place each arrival spawn at least three tiles inward from its matching exit.
+
+Place map-to-map exits in one- or two-tile openings in the outer border wall. A building or shrine entrance may use a door in a structure wall. Mark the exit tile in the opening. This is a layout convention for map authors.

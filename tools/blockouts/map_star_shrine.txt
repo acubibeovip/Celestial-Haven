@@ -6,7 +6,7 @@
 #....BB......BB....#
 #....BB......BB....#
 #....BB......BB....#
-#..:ES:::S::::::::.#
+#..::::::S::::::S::E
 #..:::::::::::::::.#
 #.....##::##.......#
 #.###.##::##...BBB.#
@@ -18,6 +18,6 @@
 ####################
 
 ; Markers in row-major order for each symbol. spawn NAME / exit NAME TARGET_MAP TARGET_SPAWN.
-spawn from_crystal_hollow
 spawn default
+spawn from_crystal_hollow
 exit to_crystal_hollow map_crystal_hollow from_star_shrine

@@ -40,7 +40,7 @@ test('each exit arrives at a spawn whose box overlaps neither an exit nor solid 
   }
 });
 
-test('the village default has a straight unobstructed walk to the farm exit within twelve tiles', () => {
+test('the village default has a straight unobstructed walk to the farm exit within sixteen tiles', () => {
   const map = maps.get('map_starbrook_village');
   const spawn = map?.spawns.get('default');
   const exit = map?.exits.get('to_farm');
@@ -49,7 +49,7 @@ test('the village default has a straight unobstructed walk to the farm exit with
   const y = Math.floor(spawn.y / map.data.tileheight);
   expect(exit.tileY).toBe(y);
   expect(exit.tileX - x).toBeGreaterThan(0);
-  expect(exit.tileX - x).toBeLessThanOrEqual(12);
+  expect(exit.tileX - x).toBeLessThanOrEqual(16);
   for (let col = x; col <= exit.tileX; col++) expect(map.collision.solid[y * map.data.width + col]).toBe(false);
 });
 

@@ -1,5 +1,5 @@
 ; Legend: # wall, . open ground, : path, B structure, ~ water, S spawn, E exit.
-; Village to farm: walk right on row 8 from default (4,8) to exit (9,8), five tiles without obstructions.
+; Village to farm: walk right on row 8 from default (24,8) to the east boundary exit (39,8), 15 tiles unobstructed.
 ; 1-tile lane: row 16, columns 6–12. 2-tile lane: rows 13–14, columns 25–29.
 ########################################
 #......................................#
@@ -9,8 +9,8 @@
 #...............BBBBBB...BBBBBBBB......#
 #...............BBBBBB...BBBBBBBB......#
 #...............BBBBBB...BBBBBBBB.:::..#
-#..:S:::SE:::::::::::::::::::::::::::..#
-#..:::::::::::::::::::::::::::::::SE:..#
+#..:::::::::::::::::::::S:::::::::::S::E
+E::S:::::::::::::::::::::::::::::::::..#
 #..::::::::::::::::::::::::::::::::::..#
 #.............:::.................:::..#
 #.............:::........#####....:::..#

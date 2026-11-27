@@ -12,7 +12,7 @@
 #......................................#
 #............:::.......................#
 #...:::::::::::::::::::::::::::::::::..#
-#...:ES:S:::::::::::::::::::::::::SE:..#
+E::S::::S:::::::::::::::::::::::::::S::E
 #...:::::::::::::::::::::::::::::::::..#
 #............:::..####::###............#
 #............:::..####::###............#
@@ -34,8 +34,8 @@
 ########################################
 
 ; Markers in row-major order for each symbol. spawn NAME / exit NAME TARGET_MAP TARGET_SPAWN.
-spawn from_village
-spawn default
 spawn from_crystal_hollow
-exit to_village map_starbrook_village from_whisperwood
+spawn default
+spawn from_village
 exit to_crystal_hollow map_crystal_hollow from_whisperwood
+exit to_village map_starbrook_village from_whisperwood
