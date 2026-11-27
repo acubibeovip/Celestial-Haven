@@ -71,6 +71,19 @@ describe('stepMovement', () => {
     expect(run({ x: 70, y: 56 }, { x: 1, y: 0 }, collision, 5).x).toBeLessThanOrEqual(86);
   });
 
+  test.each([
+    { direction: '+x', start: spawnPosition(0, 0), intent: { x: 1, y: 0 },
+      collision: grid(6, 1, [[2, 0]]), stop: { x: 54, y: 24 } },
+    { direction: '-x', start: spawnPosition(5, 0), intent: { x: -1, y: 0 },
+      collision: grid(6, 1, [[3, 0]]), stop: { x: 138, y: 24 } },
+    { direction: '+y', start: spawnPosition(0, 0), intent: { x: 0, y: 1 },
+      collision: grid(1, 6, [[0, 2]]), stop: { x: 16, y: 64 } },
+    { direction: '-y', start: spawnPosition(0, 5), intent: { x: 0, y: -1 },
+      collision: grid(1, 6, [[0, 3]]), stop: { x: 16, y: 140 } },
+  ])('stops exactly at an intervening wall in one 1000 ms step ($direction)', ({ start, intent, collision, stop }) => {
+    expect(stepMovement(start, intent, collision, 1000)).toEqual(stop);
+  });
+
   test('non-finite input is a no-op and inputs are not mutated', () => {
     const position = Object.freeze({ x: 64, y: 64 });
     const intent = Object.freeze({ x: 1, y: 0 });
