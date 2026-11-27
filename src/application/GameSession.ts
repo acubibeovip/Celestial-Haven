@@ -5,9 +5,9 @@ import type { Result } from '@shared/result';
 export type { Mode, NewGameRequest } from '@domain/player/types';
 
 export type SessionState = { phase: 'menu' } | { phase: 'playing'; player: PlayerState };
-export type SessionCommand = Readonly<{ type: 'NewGame' } & NewGameRequest>;
-export type SessionEvent = Readonly<{ type: 'GameStarted' } & NewGameRequest>;
-export type SessionError = NewGameError | 'ALREADY_PLAYING';
+export type SessionCommand = Readonly<({ type: 'NewGame' } & NewGameRequest) | { type: 'EnterExit'; exitName: string }>;
+export type SessionEvent = Readonly<({ type: 'GameStarted' } & NewGameRequest) | { type: 'MapChanged'; mapId: string }>;
+export type SessionError = NewGameError | 'ALREADY_PLAYING' | 'NOT_PLAYING' | 'UNKNOWN_EXIT' | 'MISSING_CHECKPOINT';
 export type SessionListener = (event: SessionEvent) => void;
 
 export interface GameSession {

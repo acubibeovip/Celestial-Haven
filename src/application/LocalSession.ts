@@ -1,10 +1,11 @@
 import { createNewGame } from '@domain/player/newGame';
 import type { NewGameCatalog } from '@domain/player/types';
+import { START_MAP_ID, type MapCatalog } from './MapCatalog';
 import { err, ok, type Result } from '@shared/result';
 import type { GameSession, SessionCommand, SessionError, SessionEvent, SessionListener, SessionState } from './GameSession';
 
 function freezeTree<T>(value: T): T {
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === 'object' && value !== null && !Object.isFrozen(value)) {
     for (const child of Object.values(value)) freezeTree(child);
     Object.freeze(value);
   }
@@ -16,10 +17,12 @@ export class LocalSession implements GameSession {
   private readonly listeners = new Set<SessionListener>();
 
   private readonly catalog: NewGameCatalog;
+  private readonly maps: MapCatalog;
   private readonly reportError: (error: unknown) => void;
 
-  constructor(catalog: NewGameCatalog, reportError: (error: unknown) => void = (error) => console.error(error)) {
+  constructor(catalog: NewGameCatalog, maps: MapCatalog, reportError: (error: unknown) => void = (error) => console.error(error)) {
     this.catalog = catalog;
+    this.maps = maps;
     this.reportError = reportError;
   }
 
@@ -34,17 +37,33 @@ export class LocalSession implements GameSession {
   }
 
   dispatch(command: SessionCommand): Result<void, SessionError> {
-    if (this.state.phase === 'playing') return err('ALREADY_PLAYING');
-    const result = createNewGame(command, this.catalog);
-    if (!result.ok) return result;
-
-    this.state = freezeTree({ phase: 'playing', player: result.value });
-    this.emit(Object.freeze({
-      type: 'GameStarted',
-      heroId: result.value.heroId,
-      mode: result.value.mode,
-    }));
-    return ok(undefined);
+    switch (command.type) {
+      case 'NewGame': {
+        if (this.state.phase === 'playing') return err('ALREADY_PLAYING');
+        const spawn = this.maps.get(START_MAP_ID)?.spawns.get('default');
+        if (!spawn) return err('MISSING_CHECKPOINT');
+        const result = createNewGame(command, this.catalog, spawn);
+        if (!result.ok) return result;
+        this.state = freezeTree({ phase: 'playing', player: result.value });
+        this.emit(Object.freeze({ type: 'GameStarted', heroId: result.value.heroId, mode: result.value.mode }));
+        return ok(undefined);
+      }
+      case 'EnterExit': {
+        if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+        const { player } = this.state;
+        const exit = this.maps.get(player.location.mapId)?.exits.get(command.exitName);
+        if (!exit) return err('UNKNOWN_EXIT');
+        const spawn = this.maps.get(exit.targetMap)?.spawns.get(exit.targetSpawn);
+        if (!spawn) return err('MISSING_CHECKPOINT');
+        this.state = freezeTree({ phase: 'playing', player: { ...player, location: { ...spawn } } });
+        this.emit(Object.freeze({ type: 'MapChanged', mapId: spawn.mapId }));
+        return ok(undefined);
+      }
+      default: {
+        const exhaustive: never = command;
+        return exhaustive;
+      }
+    }
   }
 
   private emit(event: SessionEvent): void {

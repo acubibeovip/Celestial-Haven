@@ -1,3 +1,4 @@
+import { mapNameKey, requiredMapIds } from '../content/validateMap';
 import type { ElementDef } from '../content/schema/element';
 import type { HeroDef } from '../content/schema/hero';
 import type { ItemDef } from '../content/schema/item';
@@ -15,6 +16,9 @@ export const sessionErrorKeys = {
   MISSING_STARTER_ITEM: 'ui.new_game_error.missing_starter_item',
   STARTER_ITEM_INVALID: 'ui.new_game_error.starter_item_invalid',
   ALREADY_PLAYING: 'ui.new_game_error.already_playing',
+  NOT_PLAYING: 'ui.session_error.not_playing',
+  UNKNOWN_EXIT: 'ui.session_error.unknown_exit',
+  MISSING_CHECKPOINT: 'ui.session_error.missing_checkpoint',
 } as const satisfies Record<SessionError, string>;
 
 const menuKeys = [
@@ -23,9 +27,7 @@ const menuKeys = [
   'ui.select.title', 'ui.select.preview', 'ui.select.mode', 'ui.select.confirm',
   'ui.mode.peaceful', 'ui.mode.peaceful_description', 'ui.mode.adventure', 'ui.mode.adventure_description',
   'ui.template.close', 'ui.template.ranged', 'ui.template.support',
-  'ui.ready.title', 'ui.ready.temporary', 'ui.ready.mode', 'ui.ready.level', 'ui.ready.equipment',
-  'ui.ready.stats', 'ui.ready.max_hp', 'ui.ready.max_mana', 'ui.ready.power', 'ui.ready.guard',
-  'ui.ready.unavailable', 'ui.content_error', ...Object.values(sessionErrorKeys),
+  'ui.content_error', ...requiredMapIds.map(mapNameKey), ...Object.values(sessionErrorKeys),
 ] as const;
 
 export type ContentRegistry = {

@@ -22,7 +22,9 @@ npx playwright install chromium
 | `npm run lint` | Lint the source tree and enforce the domain import and global rules. |
 | `npm test` | Run unit tests and the domain lint regression tests. |
 | `npm run validate:content` | Validate game content JSON in `src/content/data/`. Pass `-- --dir <directory>` to check another directory. |
-| `npm run validate:maps` | Validate Tiled JSON in `public/maps/` or a directory passed with `-- --dir <directory>`. |
+| `npm run generate:maps` | Regenerate provisional maps from ASCII layouts. |
+| `npm run check:maps` | Compare generated maps against committed JSON without writing files. |
+| `npm run validate:maps` | Validate Tiled JSON in `src/content/maps/` or a directory passed with `-- --dir <directory>`. |
 | `npm run build` | Validate content and maps, then build the static game into `dist/`. |
 | `npm run preview` | Serve the built game for local inspection. |
 | `npm run test:prototype` | Test the dev-only map prototype and capture both sprite cell sizes. |

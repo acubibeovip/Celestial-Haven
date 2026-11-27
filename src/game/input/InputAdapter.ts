@@ -1,3 +1,5 @@
+import './joystick.css';
+
 export type InputIntent = Readonly<{ x: number; y: number }>;
 
 export const JOYSTICK_RADIUS_PX = 48;
@@ -48,7 +50,10 @@ export class InputAdapter {
   #joystickIntent: InputIntent = { x: 0, y: 0 };
   #pointerId: number | undefined;
 
-  constructor(parent: HTMLElement) {
+  readonly #canCapture: () => boolean;
+
+  constructor(parent: HTMLElement, canCapture = () => true) {
+    this.#canCapture = canCapture;
     this.#joystick = document.createElement('div');
     this.#joystick.className = 'virtual-joystick';
     this.#joystick.dataset.testid = 'virtual-joystick';
@@ -71,6 +76,11 @@ export class InputAdapter {
   }
 
   getIntent(): InputIntent {
+    if (!this.#canCapture()) {
+      this.#keys.clear();
+      this.#resetJoystick();
+      return { x: 0, y: 0 };
+    }
     return mergeIntents(keyboardIntent(this.#keys), this.#joystickIntent);
   }
 
@@ -87,14 +97,14 @@ export class InputAdapter {
   }
 
   readonly #onKeyDown = (event: KeyboardEvent): void => {
-    if (!movementCodes.has(event.code)) return;
+    if (!movementCodes.has(event.code) || !this.#canCapture()) return;
     event.preventDefault();
     this.#keys.add(event.code);
   };
 
   readonly #onKeyUp = (event: KeyboardEvent): void => {
     if (!movementCodes.has(event.code)) return;
-    event.preventDefault();
+    if (this.#canCapture() && this.#keys.has(event.code)) event.preventDefault();
     this.#keys.delete(event.code);
   };
 
@@ -107,7 +117,7 @@ export class InputAdapter {
   };
 
   readonly #onPointerDown = (event: PointerEvent): void => {
-    if (this.#pointerId !== undefined) return;
+    if (this.#pointerId !== undefined || !this.#canCapture()) return;
     this.#pointerId = event.pointerId;
     this.#joystick.classList.add('virtual-joystick-visible');
     if (event.isTrusted) this.#joystick.setPointerCapture(event.pointerId);
@@ -120,10 +130,14 @@ export class InputAdapter {
 
   readonly #onPointerEnd = (event: PointerEvent): void => {
     if (event.pointerId !== this.#pointerId) return;
+    this.#resetJoystick();
+  };
+
+  #resetJoystick(): void {
     this.#pointerId = undefined;
     this.#joystickIntent = { x: 0, y: 0 };
     this.#thumb.style.transform = 'translate(0px, 0px)';
-  };
+  }
 
   #updateJoystick(event: PointerEvent): void {
     const bounds = this.#joystick.getBoundingClientRect();

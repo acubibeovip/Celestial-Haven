@@ -40,21 +40,21 @@ async function expectTouchTargets(frame: FrameLocator) {
   }
 }
 
-async function expectReady(
-  frame: FrameLocator,
-  { hero, mode, weapon, stats }: { hero: string; mode: string; weapon: string; stats: number[] },
-) {
-  await expect(frame.getByRole('heading', { name: 'Ready' })).toBeFocused();
-  await expect(frame.getByRole('heading', { name: hero })).toBeVisible();
-  await expect(frame.getByText('Temporary screen while the world is in development.', { exact: false })).toBeVisible();
-  await expect(frame.locator('.ready-identity dd')).toHaveText([mode, '1']);
-  await expect(frame.locator('.ready-group li')).toHaveText([weapon, "Traveler's Tunic"]);
-  await expect(frame.locator('.ready-group dt')).toHaveText(['Max HP', 'Max mana', 'Power', 'Guard']);
-  await expect(frame.locator('.ready-group dd')).toHaveText(stats.map(String));
-  await expect(frame.getByRole('button', { name: 'Back' })).toHaveCount(0);
+async function expectVillage(frame: FrameLocator) {
+  await expect(frame.locator('#game.world-active canvas')).toBeVisible();
+  await expect(frame.getByTestId('map-name')).toHaveText('Starbrook Village');
+  await expect(frame.locator('#app')).toBeHidden();
 }
 
-test('keyboard selection starts a ranged hero and shows Ready from session state', async ({ page, baseURL }, testInfo) => {
+async function observeMapFade(frame: FrameLocator): Promise<void> {
+  await frame.locator('#game').evaluate((element) => {
+    new MutationObserver(() => {
+      element.setAttribute('data-test-fade-observed', 'true');
+    }).observe(element, { attributes: true, attributeFilter: ['aria-busy'] });
+  });
+}
+
+test('keyboard selection keeps arrow focus and walks Village to Farm and back', async ({ page, baseURL }) => {
   const { frame, errors } = await openMenu(page, baseURL);
   await expect(frame.getByRole('button')).toHaveText(['New Game', 'Settings', 'Credits']);
   await expectTouchTargets(frame);
@@ -94,27 +94,57 @@ test('keyboard selection starts a ranged hero and shows Ready from session state
   await expect(mode).toBeChecked();
   await expect(confirm).toBeEnabled();
   await confirm.press('Enter');
-  await expectReady(frame, {
-    hero: 'Frostfox Sorceress', mode: 'Peaceful', weapon: 'Willow Shortbow', stats: [100, 50, 14, 8],
+  await expectVillage(frame);
+  const arrowPropagates = await frame.locator('#game').evaluate((host) => {
+    const dialog = document.createElement('dialog');
+    const button = document.createElement('button');
+    dialog.append(button);
+    document.body.append(dialog);
+    dialog.showModal();
+    button.focus();
+    const propagated = button.dispatchEvent(new KeyboardEvent('keydown', {
+      code: 'ArrowRight', bubbles: true, cancelable: true,
+    }));
+    dialog.close();
+    dialog.remove();
+    host.focus();
+    return propagated;
   });
-  await page.screenshot({ path: testInfo.outputPath('ready-desktop.png') });
-  await page.keyboard.press('Escape');
-  await expect(frame.getByRole('heading', { name: 'Ready' })).toBeVisible();
+  expect(arrowPropagates).toBe(true);
+
+
+  const map = frame.getByTestId('map-name');
+  await observeMapFade(frame);
+  const busy = frame.locator('#game[aria-busy="true"]');
+  await page.keyboard.down('ArrowRight');
+  try {
+    await expect(map).toHaveText('Farm');
+    await expect(frame.locator('#game')).toHaveAttribute('data-test-fade-observed', 'true');
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
+  await expect(busy).toHaveCount(0);
+  await page.keyboard.down('ArrowLeft');
+  try {
+    await expect(map).toHaveText('Starbrook Village');
+  } finally {
+    await page.keyboard.up('ArrowLeft');
+  }
   await page.reload();
   await expect(frame.getByRole('heading', { name: 'Celestial Haven' })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-for (const { orientation, width, height, columns, hero, weapon, stats } of [
+for (const { orientation, width, height, columns, hero } of [
   { orientation: 'landscape', width: 844, height: 390, columns: 5,
-    hero: 'Storm Monk', weapon: 'Training Blade', stats: [130, 30, 15, 12] },
+    hero: 'Storm Monk' },
   { orientation: 'portrait', width: 390, height: 844, columns: 2,
-    hero: 'Aurora Priestess', weapon: 'Lantern Focus', stats: [110, 80, 9, 10] },
+    hero: 'Aurora Priestess' },
 ]) {
   test.describe(`mobile ${orientation}`, () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width, height } });
 
-    test(`touch selection starts ${hero} and shows equipped gear and stats`, async ({ page, baseURL }, testInfo) => {
+    test(`touch selection starts ${hero} in Starbrook Village`, async ({ page, baseURL, context }) => {
       const { frame, errors } = await openMenu(page, baseURL);
       await expectTouchTargets(frame);
       await frame.getByRole('button', { name: 'New Game' }).tap();
@@ -133,14 +163,49 @@ for (const { orientation, width, height, columns, hero, weapon, stats } of [
       const preview = frame.getByRole('complementary', { name: 'Hero preview' });
       await expect(preview.getByRole('heading')).toHaveText(hero);
       await confirm.tap();
-      await expectReady(frame, { hero, mode: 'Adventure', weapon, stats });
-      if (orientation === 'portrait') {
-        await page.screenshot({ path: testInfo.outputPath('ready-mobile-portrait.png') });
+      await expectVillage(frame);
+
+      if (orientation === 'landscape') {
+        const joystick = frame.getByTestId('virtual-joystick');
+        await expect(joystick).toBeVisible();
+        const bounds = await joystick.boundingBox();
+        if (!bounds) throw new Error('Joystick has no bounds.');
+        const x = bounds.x + bounds.width / 2;
+        const y = bounds.y + bounds.height / 2;
+        const touch = await context.newCDPSession(page);
+        try {
+          await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+          await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 50, y }] });
+          await expect(frame.getByTestId('map-name')).toHaveText('Farm');
+        } finally {
+          await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+          await touch.detach();
+        }
       }
       expect(errors).toEqual([]);
     });
   });
 }
+
+test('reduced motion reaches Farm without entering the fade state', async ({ page, baseURL }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const { frame, errors } = await openMenu(page, baseURL);
+  await frame.getByRole('button', { name: 'New Game' }).click();
+  await frame.getByRole('button', { name: 'Storm Monk', exact: true }).click();
+  await frame.getByRole('radio', { name: 'Peaceful' }).click();
+  await frame.getByRole('button', { name: 'Confirm' }).click();
+  await expectVillage(frame);
+  await observeMapFade(frame);
+
+  await page.keyboard.down('ArrowRight');
+  try {
+    await expect(frame.getByTestId('map-name')).toHaveText('Farm');
+  } finally {
+    await page.keyboard.up('ArrowRight');
+  }
+  await expect(frame.locator('#game[aria-busy], #game[data-test-fade-observed]')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
 
 test('Settings defaults to reduced-motion preference and retains changes only in memory', async ({ page, baseURL }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });

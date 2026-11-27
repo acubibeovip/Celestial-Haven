@@ -29,19 +29,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - run: npm run check:maps
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - id: e2e
         run: npm run test:e2e -- --reporter=line,html
         env:
           PLAYWRIGHT_HTML_OPEN: never
-      - name: Upload Ready screenshots for the PR
-        if: ${{ github.event_name == 'pull_request' && steps.e2e.outcome == 'success' }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: ready-screenshots
-          path: test-results/**/ready-*.png
-          if-no-files-found: error
       - name: Check the dev map prototype and capture both cell sizes
         id: map-prototype
         if: github.event_name == 'pull_request'
@@ -52,6 +46,13 @@ jobs:
         with:
           name: map-prototype-screenshots
           path: test-results/prototype/**/map-prototype-cell-*.png
+          if-no-files-found: error
+      - name: Upload world map overviews
+        if: ${{ github.event_name == 'pull_request' && steps.map-prototype.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: world-map-overviews
+          path: test-results/prototype/**/world-map-*.png
           if-no-files-found: error
       - name: Upload Playwright report
         if: ${{ failure() && steps.e2e.outcome == 'failure' }}

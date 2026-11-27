@@ -1,6 +1,5 @@
 import { sessionErrorKeys, type ContentRegistry, type ValidationError } from '../application/ContentRegistry';
-import type { GameSession, Mode, SessionState } from '../application/GameSession';
-import type { ReadyView } from '../application/readyView';
+import type { GameSession, Mode } from '../application/GameSession';
 import { confirmSelection, heroViewModels, initialSelection, reduceSelection, type HeroViewModel } from './selection';
 
 function node<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
@@ -50,11 +49,10 @@ export function showContentError(root: HTMLElement, title: string, errors: Valid
 type MenuOptions = {
   registry: ContentRegistry;
   session: GameSession;
-  readyView: (state: Readonly<SessionState>) => ReadyView | null;
   initialReducedMotion: boolean;
 };
 
-export function mountMenu(root: HTMLElement, { registry, session, readyView, initialReducedMotion }: MenuOptions): void {
+export function mountMenu(root: HTMLElement, { registry, session, initialReducedMotion }: MenuOptions): void {
   const text = registry.text;
   const heroes = heroViewModels(registry);
   const placeholderLabel = text('ui.placeholder');
@@ -126,47 +124,6 @@ export function mountMenu(root: HTMLElement, { registry, session, readyView, ini
     const { screen, heading } = page(text('ui.title.credits'), back, 'simple-screen panel');
     screen.append(node('p', 'credit-name', text('ui.project_name')));
     show(screen, heading, back);
-  }
-
-  function ready(): void {
-    const screen = node('section', 'simple-screen panel ready-screen');
-    const heading = node('h1', undefined, text('ui.ready.title'));
-    heading.tabIndex = -1;
-    const view = readyView(session.snapshot());
-    screen.append(heading, node('p', 'muted ready-note', text('ui.ready.temporary')));
-    if (!view) {
-      screen.append(node('p', 'menu-error', text('ui.ready.unavailable')));
-      show(screen, heading);
-      return;
-    }
-
-    const hero = node('h2', 'ready-hero', view.hero);
-    const identity = node('dl', 'ready-details ready-identity');
-    identity.append(
-      node('dt', undefined, text('ui.ready.mode')), node('dd', undefined, view.mode),
-      node('dt', undefined, text('ui.ready.level')), node('dd', undefined, String(view.level)),
-    );
-
-    const equipment = node('section', 'ready-group');
-    const gear = node('ul');
-    gear.append(...view.equipped.map((name) => node('li', undefined, name)));
-    equipment.append(node('h2', undefined, text('ui.ready.equipment')), gear);
-
-    const stats = node('section', 'ready-group');
-    const details = node('dl', 'ready-details');
-    const entries = [
-      ['ui.ready.max_hp', view.stats.maxHp], ['ui.ready.max_mana', view.stats.maxMana],
-      ['ui.ready.power', view.stats.power], ['ui.ready.guard', view.stats.guard],
-    ] as const;
-    for (const [key, value] of entries) {
-      details.append(node('dt', undefined, text(key)), node('dd', undefined, String(value)));
-    }
-    stats.append(node('h2', undefined, text('ui.ready.stats')), details);
-
-    const groups = node('div', 'ready-groups');
-    groups.append(equipment, stats);
-    screen.append(hero, identity, groups);
-    show(screen, heading);
   }
 
   function selectHero(): void {
@@ -283,7 +240,10 @@ export function mountMenu(root: HTMLElement, { registry, session, readyView, ini
     }
   });
   session.subscribe((event) => {
-    if (event.type === 'GameStarted') ready();
+    if (event.type === 'GameStarted') {
+      goBack = undefined;
+      root.hidden = true;
+    }
   });
   setReducedMotion(initialReducedMotion);
   title();
