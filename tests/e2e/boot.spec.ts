@@ -24,3 +24,9 @@ test('renders the Boot scene from the built page in an iframe', async ({ page, b
   })).toBe(true);
   expect(errors).toEqual([]);
 });
+
+test('production ignores the dev prototype query parameter', async ({ page }) => {
+  await page.goto('index.html?proto');
+  await expect(page.getByRole('heading', { name: 'Celestial Haven' })).toBeVisible();
+  await expect(page.locator('.prototype-stage')).toHaveCount(0);
+});
