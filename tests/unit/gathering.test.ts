@@ -23,7 +23,15 @@ const stone = catalog.resourceNodes.res_stone_01!;
 const endDay = { type: 'EndDay' } as const;
 const gather = ({ id }: ResourceNode): SessionCommand => ({ type: 'Gather', nodeId: id });
 
-function start(content = catalog, checkpoints: MapCatalog = maps) {
+function mapsWithStartingNodes(nodeIds: readonly string[]) {
+  const checkpoints = new Map(maps);
+  const startingMap = checkpoints.get(START_MAP_ID);
+  if (!startingMap) throw new Error('Expected the starting map.');
+  checkpoints.set(START_MAP_ID, { ...startingMap, resourceNodeIds: new Set(nodeIds) });
+  return checkpoints;
+}
+
+function start(content = catalog, checkpoints: MapCatalog = mapsWithStartingNodes([oak.id, moonpetal.id, stone.id])) {
   const session = new LocalSession(content, checkpoints);
   valueOf(session.dispatch({ type: 'NewGame', heroId: 'hero_storm_monk', mode: 'peaceful' }));
   return session;
@@ -88,7 +96,7 @@ test('a full bag leaves the node available and keeps inventory, XP, snapshot and
   const session = start({
     ...catalog, items: { ...catalog.items, [filler.id]: filler },
     resourceNodes: { ...catalog.resourceNodes, ...fillerNodes },
-  });
+  }, mapsWithStartingNodes([oak.id, ...Object.keys(fillerNodes)]));
   for (const node of Object.values(fillerNodes)) valueOf(session.dispatch(gather(node)));
   const before = playing(session);
   expect(countItem(before.player, filler.id)).toBe(24);
@@ -155,12 +163,7 @@ test('Gather and EndDay reject in the menu without state or event changes', () =
 });
 
 test('Gather rejects unknown nodes and nodes excluded by the current map, preserving world across moves', () => {
-  const checkpoints: MapCatalog = new Map([
-    ...maps,
-    [START_MAP_ID, { ...maps.get(START_MAP_ID)!, resourceNodeIds: new Set([oak.id]) }],
-    ['map_farm', { ...maps.get('map_farm')!, resourceNodeIds: new Set<string>() }],
-  ]);
-  const session = start(catalog, checkpoints);
+  const session = start(catalog, mapsWithStartingNodes([oak.id]));
   const listener = vi.fn();
   session.subscribe(listener);
   const before = session.snapshot();
@@ -179,5 +182,21 @@ test('Gather rejects unknown nodes and nodes excluded by the current map, preser
   listener.mockClear();
   expect(session.dispatch(gather(oak))).toEqual({ ok: false, error: 'NODE_NOT_ON_MAP' });
   expect(session.snapshot()).toBe(inFarm);
+  expect(listener).not.toHaveBeenCalled();
+});
+
+test.each([
+  ['missing current map entry', true],
+  ['empty current map node set', false],
+] as const)('Gather returns NODE_NOT_ON_MAP for a %s', (_, removeMap) => {
+  const checkpoints = mapsWithStartingNodes([]);
+  const session = start(catalog, checkpoints);
+  if (removeMap) checkpoints.delete(START_MAP_ID);
+  const before = playing(session);
+  const listener = vi.fn();
+  session.subscribe(listener);
+
+  expect(session.dispatch(gather(oak))).toEqual({ ok: false, error: 'NODE_NOT_ON_MAP' });
+  expect(session.snapshot()).toBe(before);
   expect(listener).not.toHaveBeenCalled();
 });

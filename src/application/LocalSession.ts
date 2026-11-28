@@ -76,9 +76,7 @@ export class LocalSession implements GameSession {
         const { player, world } = this.state;
         const node = getEntry(this.catalog.resourceNodes, command.nodeId);
         if (!node) return err('UNKNOWN_NODE');
-        // M2-04b supplies the map's resource marker IDs. An empty set means the map has no nodes.
-        const placedNodes = this.maps.get(player.location.mapId)?.resourceNodeIds;
-        if (placedNodes && !placedNodes.has(node.id)) return err('NODE_NOT_ON_MAP');
+        if (!this.maps.get(player.location.mapId)?.resourceNodeIds.has(node.id)) return err('NODE_NOT_ON_MAP');
 
         const result = harvest(player, world, node, this.catalog);
         if (!result.ok) return result;
