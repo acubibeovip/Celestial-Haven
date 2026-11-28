@@ -1,6 +1,6 @@
 # ADR-020 Equipment and session inventory commands
 
-Status: Proposed
+Status: Accepted (2026-11-28, reviewed in PR #19)
 
 ## D43 Gear upgrade tiers
 
