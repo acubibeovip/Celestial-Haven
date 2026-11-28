@@ -393,7 +393,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [x] M2-01: Player stats, level/XP, gain from non-combat activities.
 - [x] M2-02: Inventory stack, 24 slots, hotbar, atomic ops.
 - [x] M2-03: Gear instances, equip slots and stat projection.
-- [ ] M2-04: Gathering + mining node lifecycle, interact and respawn.
+- [x] M2-04: Gathering + mining node lifecycle, interact and respawn.
 - [ ] M2-05: Craft station and recipes, full bag rollback.
 - [ ] M2-06: Upgrade preview, deterministic +0..+3, no random loss.
 - [ ] M2-07: T03–T08; demonstrate gather → craft → upgrade.

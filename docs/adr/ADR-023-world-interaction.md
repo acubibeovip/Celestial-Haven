@@ -1,6 +1,6 @@
 # ADR-023 World interactions
 
-Status: Proposed
+Status: Accepted (2026-11-28, reviewed in PR #21)
 
 ## D54 Resource and bed markers
 
