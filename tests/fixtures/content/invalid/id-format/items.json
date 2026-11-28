@@ -1,7 +1,7 @@
 [
   {
     "id": "Item-test",
-    "kind": "fixture",
+    "kind": "material",
     "stackMax": 10,
     "icon": "test-a",
     "price": 1,

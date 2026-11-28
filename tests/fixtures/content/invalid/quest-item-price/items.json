@@ -1,0 +1,10 @@
+[
+  {
+    "id": "item_quest_fixture",
+    "kind": "quest",
+    "stackMax": 99,
+    "icon": "test",
+    "nameKey": "item.quest_fixture.name",
+    "price": 1
+  }
+]

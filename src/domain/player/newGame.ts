@@ -1,3 +1,4 @@
+import { BAG_CAPACITY, HOTBAR_CAPACITY } from '@domain/inventory/types';
 import { err, ok, type Result } from '@shared/result';
 import { gearForSlot, getEntry } from './catalog';
 import type { NewGameCatalog, NewGameRequest, PlayerLocation, PlayerState } from './types';
@@ -36,7 +37,8 @@ export function createNewGame(
     level: 1,
     xp: 0,
     coins: 0,
-    bag: [],
+    bag: Array<null>(BAG_CAPACITY).fill(null),
+    hotbar: Array<null>(HOTBAR_CAPACITY).fill(null),
     gear,
     equipped,
     nextGearSeq: gear.length + 1,

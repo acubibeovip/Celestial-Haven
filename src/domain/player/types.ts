@@ -1,10 +1,11 @@
+import type { BagSlot } from '@domain/inventory/types';
 import type { Progression } from '@domain/progression/types';
 
 export type Mode = 'peaceful' | 'adventure';
 export type TemplateId = 'close' | 'ranged' | 'support';
 export type GearSlot = 'mainHand' | 'body' | 'accessory';
 
-export const BAG_CAPACITY = 24;
+export { BAG_CAPACITY } from '@domain/inventory/types';
 
 export interface NewGameRequest {
   heroId: string;
@@ -35,9 +36,11 @@ export interface GearItemInfo {
   template: TemplateId | null;
 }
 
+export type ItemKind = 'material' | 'gear' | 'consumable' | 'quest';
+
 export interface ItemInfo {
   id: string;
-  kind: string;
+  kind: ItemKind;
   stackMax: number;
   gear?: GearItemInfo | undefined;
 }
@@ -68,7 +71,8 @@ export interface PlayerState {
   level: number;
   xp: number;
   coins: number;
-  bag: { itemId: string; quantity: number }[];
+  bag: BagSlot[];
+  hotbar: (string | null)[];
   gear: GearInstance[];
   equipped: Partial<Record<GearSlot, string>>;
   nextGearSeq: number;
