@@ -16,7 +16,7 @@ New Game starts with `world = { day: 1, resourceNodes: {} }`. The record stores 
 
 `Gather { nodeId }` checks that the node exists and is available, stages its yield in the bag, and applies the XP source for its kind. Only after those steps succeed does LocalSession commit player and world together and emit `ResourceGathered { nodeId, itemId, quantity, xp, levelsGained }`. The event's `xp` is the configured award before the level cap is applied. A rejection leaves the snapshot and node availability intact and emits no event.
 
-M2-04b supplies the current map's node IDs. With a list present, LocalSession returns `NODE_NOT_ON_MAP` for a node outside that list. An empty list means the map has no placed nodes. A future NetworkSession server must verify the player's proximity to the node itself.
+Every map supplies a set of placed node IDs. LocalSession returns `NODE_NOT_ON_MAP` if the current map is missing or its set excludes the node. The map loader supplies empty sets until M2-04b adds resource markers. A future NetworkSession server must verify the player's proximity to the node itself.
 
 ## D53 EndDay
 

@@ -49,7 +49,7 @@ export function loadWorldMaps(files: ReadonlyMap<string, unknown>): Result<Reado
         });
       }
     }
-    maps.set(mapId, { data, collision: tiledCollisionGrid(data), spawns, exits });
+    maps.set(mapId, { data, collision: tiledCollisionGrid(data), spawns, exits, resourceNodeIds: new Set<string>() });
   }
   return errors.length ? err(errors) : ok(maps);
 }
