@@ -1,6 +1,6 @@
 # ADR-019 Inventory and hotbar
 
-Status: Proposed
+Status: Accepted (2026-11-28, reviewed in PR #18)
 
 ## D39 Bag model
 
