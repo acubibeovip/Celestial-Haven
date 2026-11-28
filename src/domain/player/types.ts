@@ -1,3 +1,4 @@
+import type { RecipeInfo } from '@domain/crafting/craft';
 import type { ResourceNode } from '@domain/gathering/harvest';
 import type { BagSlot } from '@domain/inventory/types';
 import type { Progression } from '@domain/progression/types';
@@ -48,6 +49,7 @@ export interface ItemInfo {
 }
 
 export interface NewGameCatalog {
+  recipes: Readonly<Record<string, RecipeInfo | undefined>>;
   resourceNodes: Readonly<Record<string, ResourceNode | undefined>>;
   progression: Progression;
   heroes: Readonly<Record<string, HeroInfo | undefined>>;
@@ -79,6 +81,7 @@ export interface PlayerState {
   gear: GearInstance[];
   equipped: Partial<Record<GearSlot, string>>;
   nextGearSeq: number;
+  craftedRecipes: string[];
   rewardLedger: string[];
   quests: Record<string, { stage: number; completed: boolean }>;
   npcBond: Record<string, number>;

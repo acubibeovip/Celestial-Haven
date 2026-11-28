@@ -18,7 +18,7 @@ const recipeStacks = z.array(itemStack).min(1).superRefine((stacks, context) => 
 
 export const recipeSchema = z.strictObject({
   id: z.string(),
-  station: text,
+  station: z.enum(['forge', 'workbench']),
   inputs: recipeStacks,
   outputs: recipeStacks,
   requirement: text.nullable(),

@@ -70,7 +70,7 @@ export function loadWorldMaps(
         interactables.push({ type: 'bed', tileX, tileY });
       }
     }
-    maps.set(mapId, { data, collision: tiledCollisionGrid(data), spawns, exits, interactables, resourceNodeIds, hasBed });
+    maps.set(mapId, { data, collision: tiledCollisionGrid(data), spawns, exits, interactables, resourceNodeIds, hasBed, stations: new Set() });
   }
   return errors.length ? err(errors) : ok(maps);
 }

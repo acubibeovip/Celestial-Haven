@@ -7,6 +7,7 @@ export function createNewGameCatalog(registry: ContentRegistry): NewGameCatalog 
     templates: registry.templates,
     progression: registry.progression,
     resourceNodes: Object.fromEntries(registry.resourceNodes),
+    recipes: Object.fromEntries(registry.recipes),
     items: Object.fromEntries(registry.items),
   };
 }

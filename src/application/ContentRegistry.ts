@@ -2,6 +2,7 @@ import { mapNameKey, requiredMapIds } from '../content/validateMap';
 import type { ElementDef } from '../content/schema/element';
 import type { HeroDef } from '../content/schema/hero';
 import type { ItemDef } from '../content/schema/item';
+import type { RecipeDef } from '../content/schema/recipe';
 import type { ResourceNodeDef } from '../content/schema/resourceNode';
 import type { ProgressionDef } from '../content/schema/progression';
 import type { Templates } from '../content/schema/template';
@@ -28,6 +29,8 @@ export const sessionErrorKeys = {
   WRONG_TEMPLATE: 'ui.session_error.wrong_template',
   SLOT_EMPTY: 'ui.session_error.slot_empty',
   BAG_FULL: 'ui.session_error.bag_full',
+  UNKNOWN_RECIPE: 'ui.session_error.unknown_recipe',
+  NO_STATION_ON_MAP: 'ui.session_error.no_station_on_map',
   UNKNOWN_NODE: 'ui.session_error.unknown_node',
   NODE_DEPLETED: 'ui.session_error.node_depleted',
   NO_BED_ON_MAP: 'ui.session_error.no_bed_on_map',
@@ -54,6 +57,7 @@ export type ContentRegistry = {
   heroes: readonly HeroDef[];
   elements: ReadonlyMap<string, ElementDef>;
   items: ReadonlyMap<string, ItemDef>;
+  recipes: ReadonlyMap<string, RecipeDef>;
   templates: Readonly<Templates>;
   progression: ProgressionDef;
   resourceNodes: ReadonlyMap<string, ResourceNodeDef>;
@@ -65,7 +69,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
   if (!result.ok) return result;
 
   const errors: ValidationError[] = [];
-  for (const kind of ['heroes', 'elements', 'strings', 'items', 'templates', 'progression', 'resourceNodes'] as const) {
+  for (const kind of ['heroes', 'elements', 'strings', 'items', 'recipes', 'templates', 'progression', 'resourceNodes'] as const) {
     if (result.value.counts[kind] === 0) {
       errors.push({ file: contentFiles[kind], path: '$', code: 'SCHEMA', message: 'Required game content is empty or missing.' });
     }
@@ -76,6 +80,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
   const heroes = files[contentFiles.heroes] as HeroDef[];
   const elements = files[contentFiles.elements] as ElementDef[];
   const items = files[contentFiles.items] as ItemDef[];
+  const recipes = files[contentFiles.recipes] as RecipeDef[];
   const templates = files[contentFiles.templates] as Templates;
   const nodes = files[contentFiles.resourceNodes] as ResourceNodeDef[];
   const progression = files[contentFiles.progression] as ProgressionDef;
@@ -94,6 +99,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
     heroes,
     elements: new Map(elements.map((element) => [element.id, element])),
     items: new Map(items.map((item) => [item.id, item])),
+    recipes: new Map(recipes.map((recipe) => [recipe.id, recipe])),
     templates,
     progression,
     resourceNodes: new Map(nodes.map((node) => [node.id, node])),
