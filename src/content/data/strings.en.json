@@ -124,5 +124,17 @@
   "ui.world.xp": "Lv {level} · {xp}/{next}",
   "ui.world.xp_max": "Lv {level} · MAX",
   "ui.world.yield": "+{quantity} {item} · +{xp} XP",
-  "ui.world.level_up": "Level {level}!"
+  "ui.world.level_up": "Level {level}!",
+  "item.plank.name": "Plank",
+  "item.woven_cloth.name": "Woven Cloth",
+  "item.quartz_lens.name": "Quartz Lens",
+  "item.copper_ingot.name": "Copper Ingot",
+  "item.iron_ingot.name": "Iron Ingot",
+  "item.starlite_ingot.name": "Starlite Ingot",
+  "item.silverleaf_tonic.name": "Silverleaf Tonic",
+  "item.moonpetal_draught.name": "Moonpetal Draught",
+  "item.star_lantern.name": "Star Lantern",
+  "ui.session_error.requirement_unsupported": "This recipe has an unsupported requirement.",
+  "ui.session_error.unknown_recipe": "That recipe is unavailable.",
+  "ui.session_error.no_station_on_map": "This map does not have the required crafting station."
 }

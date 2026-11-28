@@ -29,7 +29,7 @@ function player(slots: readonly BagSlot[] = []): PlayerState {
     location: { mapId: 'test_map', x: 0, y: 0 }, heroId: 'test_hero', mode: 'peaceful',
     level: 1, xp: 0, coins: 0, bag, hotbar: Array<null>(HOTBAR_CAPACITY).fill(null),
     gear: [{ id: 'g1', defId: 'blade', upgrade: 0 }], equipped: { mainHand: 'g1' },
-    nextGearSeq: 2, rewardLedger: [], quests: {}, npcBond: {},
+    nextGearSeq: 2, craftedRecipes: [], rewardLedger: [], quests: {}, npcBond: {},
   };
 }
 

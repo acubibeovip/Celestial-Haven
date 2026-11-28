@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { itemStack, text } from './common.ts';
+import { itemStack } from './common.ts';
 
 const recipeStacks = z.array(itemStack).min(1).superRefine((stacks, context) => {
   const seen = new Set<string>();
@@ -18,10 +18,10 @@ const recipeStacks = z.array(itemStack).min(1).superRefine((stacks, context) => 
 
 export const recipeSchema = z.strictObject({
   id: z.string(),
-  station: text,
+  station: z.enum(['forge', 'workbench']),
   inputs: recipeStacks,
   outputs: recipeStacks,
-  requirement: text.nullable(),
+  requirement: z.null(),
 });
 
 export type RecipeDef = z.infer<typeof recipeSchema>;

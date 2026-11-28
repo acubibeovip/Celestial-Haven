@@ -1,3 +1,4 @@
+import { craft } from '@domain/crafting/craft';
 import { equip, unequip } from '@domain/equipment/equipment';
 import { harvest } from '@domain/gathering/harvest';
 import { getEntry } from '@domain/player/catalog';
@@ -93,6 +94,23 @@ export class LocalSession implements GameSession {
         const world = { ...this.state.world, day: this.state.world.day + 1 };
         this.state = freezeTree({ ...this.state, world });
         this.emit(Object.freeze({ type: 'DayEnded', day: world.day }));
+        return ok(undefined);
+      }
+      case 'Craft': {
+        if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+        const { player } = this.state;
+        const recipe = getEntry(this.catalog.recipes, command.recipeId);
+        if (!recipe) return err('UNKNOWN_RECIPE');
+        if (!this.maps.get(player.location.mapId)?.stations.has(recipe.station)) return err('NO_STATION_ON_MAP');
+
+        const result = craft(player, recipe, this.catalog);
+        if (!result.ok) return result;
+        const { state, createdGearIds, xp, levelsGained, firstTime } = result.value;
+        this.state = freezeTree({ ...this.state, player: state });
+        this.emit(freezeTree({
+          type: 'ItemCrafted', recipeId: recipe.id, outputs: recipe.outputs.map((output) => ({ ...output })),
+          createdGearIds, xp, levelsGained, firstTime,
+        }));
         return ok(undefined);
       }
       default: {

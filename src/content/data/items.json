@@ -446,5 +446,77 @@
     "stackMax": 99,
     "icon": "icon_starlite_ore",
     "price": 30
+  },
+  {
+    "id": "item_plank",
+    "nameKey": "item.plank.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_plank",
+    "price": 15
+  },
+  {
+    "id": "item_woven_cloth",
+    "nameKey": "item.woven_cloth.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_woven_cloth",
+    "price": 20
+  },
+  {
+    "id": "item_quartz_lens",
+    "nameKey": "item.quartz_lens.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_quartz_lens",
+    "price": 45
+  },
+  {
+    "id": "item_copper_ingot",
+    "nameKey": "item.copper_ingot.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_copper_ingot",
+    "price": 35
+  },
+  {
+    "id": "item_iron_ingot",
+    "nameKey": "item.iron_ingot.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_iron_ingot",
+    "price": 55
+  },
+  {
+    "id": "item_starlite_ingot",
+    "nameKey": "item.starlite_ingot.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_starlite_ingot",
+    "price": 100
+  },
+  {
+    "id": "item_silverleaf_tonic",
+    "nameKey": "item.silverleaf_tonic.name",
+    "kind": "consumable",
+    "stackMax": 99,
+    "icon": "icon_silverleaf_tonic",
+    "price": 15
+  },
+  {
+    "id": "item_moonpetal_draught",
+    "nameKey": "item.moonpetal_draught.name",
+    "kind": "consumable",
+    "stackMax": 99,
+    "icon": "icon_moonpetal_draught",
+    "price": 20
+  },
+  {
+    "id": "item_star_lantern",
+    "nameKey": "item.star_lantern.name",
+    "kind": "quest",
+    "stackMax": 1,
+    "icon": "icon_star_lantern",
+    "price": 0
   }
 ]

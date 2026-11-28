@@ -280,6 +280,14 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
         checkRef('recipes.json', `${path}.${field}[${index}].itemId`, 'items', itemId);
       });
     }
+    value.outputs.forEach(({ itemId, quantity }, index) => {
+      if (itemsById.get(itemId)?.kind === 'gear' && quantity !== 1) {
+        errors.push({
+          file: contentFiles.recipes, path: `${path}.outputs[${index}].quantity`, code: 'SCHEMA',
+          message: 'A gear output must have quantity 1.',
+        });
+      }
+    });
   }
 
   const questGraph = new Map<string, Located<QuestDef>>();

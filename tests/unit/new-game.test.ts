@@ -34,6 +34,7 @@ const progression = progressionSchema.parse(readData('progression.json'));
 const catalog = deepFreeze<NewGameCatalog>({
   progression,
   resourceNodes: {},
+  recipes: {},
   heroes: Object.fromEntries(heroes.map((hero) => [hero.id, hero])),
   templates,
   items: Object.fromEntries(items.map((item) => [item.id, item])),
@@ -77,6 +78,7 @@ test.each(heroes.flatMap(({ id, template }) => modes.map((mode) => ({ id, mode, 
       ],
       equipped: { mainHand: 'g1', body: 'g2' },
       nextGearSeq: 3,
+      craftedRecipes: [],
       rewardLedger: ['starter_kit'],
       quests: {},
       npcBond: {},
@@ -106,6 +108,7 @@ test('creates deterministic, independent state from frozen inputs and has a 24-s
 const minimal: NewGameCatalog = {
   progression,
   resourceNodes: {},
+  recipes: {},
   heroes: { [request.heroId]: { id: request.heroId, template: 'close' } },
   templates: {
     close: {

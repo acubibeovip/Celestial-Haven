@@ -1,7 +1,7 @@
 [
   {
     "id": "recipe_test_a",
-    "station": "fixture",
+    "station": "workbench",
     "inputs": [
       {
         "itemId": "item_test_a",
@@ -18,7 +18,7 @@
   },
   {
     "id": "recipe_test_b",
-    "station": "fixture",
+    "station": "workbench",
     "inputs": [
       {
         "itemId": "item_test_c",

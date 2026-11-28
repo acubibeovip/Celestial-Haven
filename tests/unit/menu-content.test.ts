@@ -20,6 +20,7 @@ test('blocks an absent roster or a missing UI translation', () => {
     expect.objectContaining({ file: 'elements.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'strings.en.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'items.json', code: 'SCHEMA' }),
+    expect.objectContaining({ file: 'recipes.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'templates.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'progression.json', code: 'SCHEMA' }),
     expect.objectContaining({ file: 'resourceNodes.json', code: 'SCHEMA' }),

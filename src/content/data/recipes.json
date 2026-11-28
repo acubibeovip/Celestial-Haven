@@ -1,0 +1,341 @@
+[
+  {
+    "id": "recipe_plank",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_oak_log",
+        "quantity": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_plank",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_woven_cloth",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_reed_fiber",
+        "quantity": 3
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_woven_cloth",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_quartz_lens",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_quartz",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_resin",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_quartz_lens",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_copper_ingot",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_copper_ore",
+        "quantity": 3
+      },
+      {
+        "itemId": "item_coal",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_copper_ingot",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_iron_ingot",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_iron_ore",
+        "quantity": 3
+      },
+      {
+        "itemId": "item_coal",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_iron_ingot",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_starlite_ingot",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_starlite_ore",
+        "quantity": 3
+      },
+      {
+        "itemId": "item_coal",
+        "quantity": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_starlite_ingot",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_ironheart_blade",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_iron_ingot",
+        "quantity": 3
+      },
+      {
+        "itemId": "item_plank",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_ironheart_blade",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_ironwood_longbow",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_iron_ingot",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_plank",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_woven_cloth",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_ironwood_longbow",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_prism_focus",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_iron_ingot",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_quartz",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_glow_moss",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_prism_focus",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_starlite_edge",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_starlite_ingot",
+        "quantity": 3
+      },
+      {
+        "itemId": "item_iron_ingot",
+        "quantity": 1
+      },
+      {
+        "itemId": "item_quartz_lens",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_starlite_edge",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_starlite_bow",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_starlite_ingot",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_plank",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_woven_cloth",
+        "quantity": 1
+      },
+      {
+        "itemId": "item_soft_feather",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_starlite_bow",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_starlite_focus",
+    "station": "forge",
+    "inputs": [
+      {
+        "itemId": "item_starlite_ingot",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_quartz_lens",
+        "quantity": 1
+      },
+      {
+        "itemId": "item_moonpetal",
+        "quantity": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_starlite_focus",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_star_lantern",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_starlite_ingot",
+        "quantity": 1
+      },
+      {
+        "itemId": "item_quartz_lens",
+        "quantity": 1
+      },
+      {
+        "itemId": "item_glow_moss",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_clay",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_star_lantern",
+        "quantity": 1
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_silverleaf_tonic",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_silverleaf",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_clay",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_silverleaf_tonic",
+        "quantity": 2
+      }
+    ],
+    "requirement": null
+  },
+  {
+    "id": "recipe_moonpetal_draught",
+    "station": "workbench",
+    "inputs": [
+      {
+        "itemId": "item_moonpetal",
+        "quantity": 2
+      },
+      {
+        "itemId": "item_clay",
+        "quantity": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemId": "item_moonpetal_draught",
+        "quantity": 2
+      }
+    ],
+    "requirement": null
+  }
+]

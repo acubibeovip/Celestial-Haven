@@ -42,6 +42,7 @@ export function createNewGame(
     gear,
     equipped,
     nextGearSeq: gear.length + 1,
+    craftedRecipes: [],
     rewardLedger: ['starter_kit'],
     quests: {},
     npcBond: {},
