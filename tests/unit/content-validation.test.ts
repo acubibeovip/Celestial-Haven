@@ -15,6 +15,9 @@ function readFixture(caseName: string): Record<string, unknown> {
 type Diagnostic = [ValidationError['code'], string, string];
 
 const invalidCases: Record<string, Diagnostic[]> = {
+  'progression-wrong-length': [['SCHEMA', 'progression.json', '$.xpToNext']],
+  'progression-zero-value': [['SCHEMA', 'progression.json', '$.xpToNext[0]']],
+  'progression-unknown-source': [['SCHEMA', 'progression.json', '$.xpSources.encounter']],
   schema: [['SCHEMA', 'elements.json', '$']],
   'missing-string-key': [['MISSING_REF', 'heroes.json', '$[0].nameKey']],
   'bad-string-key': [['SCHEMA', 'strings.en.json', '$["hero.Test.name"]']],
@@ -72,7 +75,7 @@ test('valid content reports exact counts', () => {
   expect(validateContent(readFixture('valid'))).toEqual({
     ok: true,
     value: {
-      counts: { elements: 3, heroes: 2, items: 4, recipes: 2, quests: 3, strings: 12, templates: 0 },
+      counts: { elements: 3, heroes: 2, items: 4, recipes: 2, quests: 3, strings: 12, templates: 0, progression: 1 },
       absent: ['templates'],
     },
   });
@@ -82,8 +85,8 @@ test('an empty present file differs from an absent kind', () => {
   expect(validateContent({ 'items.json': [] })).toEqual({
     ok: true,
     value: {
-      counts: { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0 },
-      absent: ['elements', 'heroes', 'recipes', 'quests', 'strings', 'templates'],
+      counts: { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0 },
+      absent: ['elements', 'heroes', 'recipes', 'quests', 'strings', 'templates', 'progression'],
     },
   });
 });

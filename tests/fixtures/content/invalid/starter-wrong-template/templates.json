@@ -7,6 +7,12 @@
       "power": 12,
       "guard": 10
     },
+    "growth": {
+      "maxHp": 0,
+      "maxMana": 0,
+      "power": 0,
+      "guard": 0
+    },
     "starterGear": {
       "mainHand": "item_willow_shortbow",
       "body": "item_traveler_tunic"
@@ -20,6 +26,12 @@
       "power": 11,
       "guard": 6
     },
+    "growth": {
+      "maxHp": 0,
+      "maxMana": 0,
+      "power": 0,
+      "guard": 0
+    },
     "starterGear": {
       "mainHand": "item_willow_shortbow",
       "body": "item_traveler_tunic"
@@ -32,6 +44,12 @@
       "maxMana": 70,
       "power": 8,
       "guard": 8
+    },
+    "growth": {
+      "maxHp": 0,
+      "maxMana": 0,
+      "power": 0,
+      "guard": 0
     },
     "starterGear": {
       "mainHand": "item_lantern_focus",

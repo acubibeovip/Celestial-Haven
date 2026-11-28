@@ -2,6 +2,7 @@ import { mapNameKey, requiredMapIds } from '../content/validateMap';
 import type { ElementDef } from '../content/schema/element';
 import type { HeroDef } from '../content/schema/hero';
 import type { ItemDef } from '../content/schema/item';
+import type { ProgressionDef } from '../content/schema/progression';
 import type { Templates } from '../content/schema/template';
 import type { SessionError } from './GameSession';
 import type { Strings } from '../content/schema/strings';
@@ -35,6 +36,7 @@ export type ContentRegistry = {
   elements: ReadonlyMap<string, ElementDef>;
   items: ReadonlyMap<string, ItemDef>;
   templates: Readonly<Templates>;
+  progression: ProgressionDef;
   text: (key: string) => string;
 };
 
@@ -43,7 +45,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
   if (!result.ok) return result;
 
   const errors: ValidationError[] = [];
-  for (const kind of ['heroes', 'elements', 'strings', 'items', 'templates'] as const) {
+  for (const kind of ['heroes', 'elements', 'strings', 'items', 'templates', 'progression'] as const) {
     if (result.value.counts[kind] === 0) {
       errors.push({ file: contentFiles[kind], path: '$', code: 'SCHEMA', message: 'Required game content is empty or missing.' });
     }
@@ -55,6 +57,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
   const elements = files[contentFiles.elements] as ElementDef[];
   const items = files[contentFiles.items] as ItemDef[];
   const templates = files[contentFiles.templates] as Templates;
+  const progression = files[contentFiles.progression] as ProgressionDef;
   const strings = files[contentFiles.strings] as Strings;
   for (const key of menuKeys) {
     if (!Object.hasOwn(strings, key)) {
@@ -71,6 +74,7 @@ export function createContentRegistry(files: Readonly<Record<string, unknown>>):
     elements: new Map(elements.map((element) => [element.id, element])),
     items: new Map(items.map((item) => [item.id, item])),
     templates,
+    progression,
     text: (key) => strings[key] ?? key,
   });
 }
