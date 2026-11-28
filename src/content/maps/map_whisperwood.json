@@ -31,18 +31,18 @@
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2,
         1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -246,6 +246,258 @@
               "name": "targetSpawn",
               "type": "string",
               "value": "from_whisperwood"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "name": "res_oak_log_01",
+          "point": true,
+          "x": 1072,
+          "y": 400,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_oak_log_01"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "name": "res_oak_log_02",
+          "point": true,
+          "x": 144,
+          "y": 464,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_oak_log_02"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "name": "res_oak_log_03",
+          "point": true,
+          "x": 336,
+          "y": 464,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_oak_log_03"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "name": "res_resin_02",
+          "point": true,
+          "x": 912,
+          "y": 464,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_resin_02"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "name": "res_silverleaf_01",
+          "point": true,
+          "x": 1104,
+          "y": 464,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_silverleaf_01"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "name": "res_resin_01",
+          "point": true,
+          "x": 496,
+          "y": 496,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_resin_01"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "res_moonpetal_01",
+          "point": true,
+          "x": 1168,
+          "y": 496,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_moonpetal_01"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "res_reed_fiber_01",
+          "point": true,
+          "x": 432,
+          "y": 624,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_reed_fiber_01"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "name": "res_reed_fiber_02",
+          "point": true,
+          "x": 144,
+          "y": 656,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_reed_fiber_02"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "name": "res_glow_moss_01",
+          "point": true,
+          "x": 592,
+          "y": 688,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_glow_moss_01"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "name": "res_soft_feather_01",
+          "point": true,
+          "x": 976,
+          "y": 752,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_soft_feather_01"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "name": "res_clay_01",
+          "point": true,
+          "x": 1136,
+          "y": 880,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "resource"
+            },
+            {
+              "name": "node",
+              "type": "string",
+              "value": "res_clay_01"
             }
           ]
         }

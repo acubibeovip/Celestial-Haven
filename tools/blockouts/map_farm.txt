@@ -1,12 +1,13 @@
-; Legend: # wall, . open ground, : path, B structure, ~ water, S spawn, E exit.
+; Legend: # wall, . open ground, : path, B structure, ~ water, S spawn, E exit, R resource node, D bed.
+; From Village: arrive at (3,8), walk east to (6,8), then north to the door (6,6). The bed is inside at (6,5).
 ; 1-tile lane: row 16, columns 3–8. 2-tile lane: rows 14–15, columns 22–27.
 ################################
 #..............................#
 #..............................#
 #....BBBB...........~~~~~~~~...#
 #....BBBB...........~~~~~~~~...#
-#....BBBB...........~~~~~~~~...#
-#....BBBB......................#
+#....BDBB...........~~~~~~~~...#
+#....B:BB......................#
 #..............................#
 E::S:::::::::S:::::::::::::::..#
 #..::::::::::::::::::::::::::..#
@@ -29,3 +30,5 @@ E::S:::::::::S:::::::::::::::..#
 spawn from_village
 spawn default
 exit to_village map_starbrook_village from_farm
+; Bed table (D, row-major).
+bed farmhouse_bed

@@ -22,7 +22,7 @@ export type SessionEvent = Readonly<
   { type: 'DayEnded'; day: number }
 >;
 export type SessionError = NewGameError | EquipError | UnequipError | LayoutError | HarvestError |
-  'UNKNOWN_NODE' | 'NODE_NOT_ON_MAP' |
+  'UNKNOWN_NODE' | 'NODE_NOT_ON_MAP' | 'NO_BED_ON_MAP' |
   'ALREADY_PLAYING' | 'NOT_PLAYING' | 'UNKNOWN_EXIT' | 'MISSING_CHECKPOINT';
 export type SessionListener = (event: SessionEvent) => void;
 

@@ -30,6 +30,7 @@ export const sessionErrorKeys = {
   BAG_FULL: 'ui.session_error.bag_full',
   UNKNOWN_NODE: 'ui.session_error.unknown_node',
   NODE_DEPLETED: 'ui.session_error.node_depleted',
+  NO_BED_ON_MAP: 'ui.session_error.no_bed_on_map',
   NODE_NOT_ON_MAP: 'ui.session_error.node_not_on_map',
   INVALID_XP_AMOUNT: 'ui.session_error.invalid_xp_amount',
   INVALID_QUANTITY: 'ui.session_error.invalid_quantity',
@@ -43,6 +44,9 @@ const menuKeys = [
   'ui.select.title', 'ui.select.preview', 'ui.select.mode', 'ui.select.confirm',
   'ui.mode.peaceful', 'ui.mode.peaceful_description', 'ui.mode.adventure', 'ui.mode.adventure_description',
   'ui.template.close', 'ui.template.ranged', 'ui.template.support',
+  'ui.world.gather', 'ui.world.mine', 'ui.world.sleep', 'ui.world.regrow_one', 'ui.world.regrow_many',
+  'ui.world.interact', 'ui.world.sleep_question', 'ui.world.yes', 'ui.world.no', 'ui.world.day',
+  'ui.world.xp', 'ui.world.xp_max', 'ui.world.yield', 'ui.world.level_up',
   'ui.content_error', ...requiredMapIds.map(mapNameKey), ...Object.values(sessionErrorKeys),
 ] as const;
 
