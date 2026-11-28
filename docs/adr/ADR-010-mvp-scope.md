@@ -52,7 +52,7 @@ These are targets [T] for definitions. Upgrade levels are instance state.
 | --- | --- |
 | Heroes and templates | 10 heroes across 3 templates |
 | Levels | 1–10 |
-| Gear definitions | 20 total, with 8 `mainHand`, 6 `body`, and 6 `accessory` |
+| Gear definitions | 20 total, with 9 `mainHand`, 6 `body`, and 5 `accessory` per [ADR-017](ADR-017-m2-content.md#4-gear-20) |
 | Gear upgrade | +0 through +3 on each instance |
 | Materials | 20 |
 | Recipes | 15 |
