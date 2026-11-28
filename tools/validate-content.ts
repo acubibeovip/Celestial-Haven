@@ -45,6 +45,8 @@ async function run(): Promise<number> {
     let count: number | 'unavailable' = 'unavailable';
     if (kind === 'strings' || kind === 'templates') {
       if (typeof data === 'object' && data !== null && !Array.isArray(data)) count = Object.keys(data).length;
+    } else if (kind === 'progression') {
+      if (typeof data === 'object' && data !== null && !Array.isArray(data)) count = 1;
     } else if (Array.isArray(data)) {
       count = data.length;
     }

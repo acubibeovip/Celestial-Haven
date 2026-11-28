@@ -10,21 +10,24 @@ function readData(file: string): unknown {
   return JSON.parse(readFileSync(new URL(file, data), 'utf8'));
 }
 
-test('real templates match ADR-012 base stats and the three starter gear mappings', () => {
+test('real templates match ADR-012 base stats, starter gear mappings, and D35 growth', () => {
   expect(templatesSchema.parse(readData('templates.json'))).toEqual({
     close: {
       nameKey: 'ui.template.close',
       base: { maxHp: 120, maxMana: 30, power: 12, guard: 10 },
+      growth: { maxHp: 8, maxMana: 2, power: 1, guard: 1 },
       starterGear: { mainHand: 'item_training_blade', body: 'item_traveler_tunic' },
     },
     ranged: {
       nameKey: 'ui.template.ranged',
       base: { maxHp: 90, maxMana: 50, power: 11, guard: 6 },
+      growth: { maxHp: 6, maxMana: 4, power: 1, guard: 1 },
       starterGear: { mainHand: 'item_willow_shortbow', body: 'item_traveler_tunic' },
     },
     support: {
       nameKey: 'ui.template.support',
       base: { maxHp: 100, maxMana: 70, power: 8, guard: 8 },
+      growth: { maxHp: 6, maxMana: 6, power: 1, guard: 1 },
       starterGear: { mainHand: 'item_lantern_focus', body: 'item_traveler_tunic' },
     },
   });

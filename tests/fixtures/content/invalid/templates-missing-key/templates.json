@@ -7,6 +7,12 @@
       "power": 12,
       "guard": 10
     },
+    "growth": {
+      "maxHp": 0,
+      "maxMana": 0,
+      "power": 0,
+      "guard": 0
+    },
     "starterGear": {
       "mainHand": "item_training_blade",
       "body": "item_traveler_tunic"
@@ -19,6 +25,12 @@
       "maxMana": 50,
       "power": 11,
       "guard": 6
+    },
+    "growth": {
+      "maxHp": 0,
+      "maxMana": 0,
+      "power": 0,
+      "guard": 0
     },
     "starterGear": {
       "mainHand": "item_willow_shortbow",

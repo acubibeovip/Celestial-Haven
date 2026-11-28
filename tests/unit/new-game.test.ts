@@ -3,6 +3,7 @@ import { expect, expectTypeOf, test } from 'vitest';
 import { z } from 'zod';
 import { heroSchema, type HeroDef } from '../../src/content/schema/hero';
 import { gearSchema, itemSchema, type ItemDef } from '../../src/content/schema/item';
+import { progressionSchema } from '../../src/content/schema/progression';
 import { templatesSchema, type TemplateDef } from '../../src/content/schema/template';
 import { createNewGame, projectStats } from '@domain/player/newGame';
 import {
@@ -28,7 +29,10 @@ const heroes = z.array(heroSchema).parse(readData('heroes.json'));
 const items = z.array(itemSchema).parse(readData('items.json'));
 const templates = templatesSchema.parse(readData('templates.json'));
 
+const progression = progressionSchema.parse(readData('progression.json'));
+
 const catalog = deepFreeze<NewGameCatalog>({
+  progression,
   heroes: Object.fromEntries(heroes.map((hero) => [hero.id, hero])),
   templates,
   items: Object.fromEntries(items.map((item) => [item.id, item])),
@@ -98,9 +102,14 @@ test('creates deterministic, independent state from frozen inputs and has a 24-s
 });
 
 const minimal: NewGameCatalog = {
+  progression,
   heroes: { [request.heroId]: { id: request.heroId, template: 'close' } },
   templates: {
-    close: { base: { maxHp: 1, maxMana: 1, power: 1, guard: 1 }, starterGear: { mainHand: 'weapon', body: 'tunic' } },
+    close: {
+      base: { maxHp: 1, maxMana: 1, power: 1, guard: 1 },
+      growth: { maxHp: 0, maxMana: 0, power: 0, guard: 0 },
+      starterGear: { mainHand: 'weapon', body: 'tunic' },
+    },
   },
   items: {
     weapon: { id: 'weapon', kind: 'gear', stackMax: 1, gear: { slot: 'mainHand', template: 'close', stats: { power: 1 } } },

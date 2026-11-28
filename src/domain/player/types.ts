@@ -1,3 +1,5 @@
+import type { Progression } from '@domain/progression/types';
+
 export type Mode = 'peaceful' | 'adventure';
 export type TemplateId = 'close' | 'ranged' | 'support';
 export type GearSlot = 'mainHand' | 'body' | 'accessory';
@@ -23,6 +25,7 @@ export interface Stats {
 
 export interface TemplateInfo {
   base: Stats;
+  growth: Stats;
   starterGear: { mainHand: string; body: string };
 }
 
@@ -40,6 +43,7 @@ export interface ItemInfo {
 }
 
 export interface NewGameCatalog {
+  progression: Progression;
   heroes: Readonly<Record<string, HeroInfo | undefined>>;
   templates: Readonly<Partial<Record<TemplateId, TemplateInfo>>>;
   items: Readonly<Record<string, ItemInfo | undefined>>;

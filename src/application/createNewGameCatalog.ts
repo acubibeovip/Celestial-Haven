@@ -5,6 +5,7 @@ export function createNewGameCatalog(registry: ContentRegistry): NewGameCatalog 
   return {
     heroes: Object.fromEntries(registry.heroes.map((hero) => [hero.id, hero])),
     templates: registry.templates,
+    progression: registry.progression,
     items: Object.fromEntries(registry.items),
   };
 }

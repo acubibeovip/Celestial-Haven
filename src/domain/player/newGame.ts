@@ -1,25 +1,12 @@
 import { err, ok, type Result } from '@shared/result';
-import type {
-  GearItemInfo, GearSlot, ItemInfo, NewGameCatalog, NewGameRequest, PlayerLocation, PlayerState, Stats, TemplateId,
-} from './types';
+import { gearForSlot, getEntry } from './catalog';
+import type { NewGameCatalog, NewGameRequest, PlayerLocation, PlayerState } from './types';
+
+export { projectStats, type ProjectStatsError } from '@domain/progression/projectStats';
 
 export type NewGameError = 'UNKNOWN_HERO' | 'UNKNOWN_TEMPLATE' | 'MISSING_STARTER_ITEM' | 'STARTER_ITEM_INVALID';
-export type ProjectStatsError = 'UNKNOWN_HERO' | 'UNKNOWN_TEMPLATE' |
-  'EQUIPPED_INSTANCE_MISSING' | 'EQUIPPED_ITEM_MISSING' | 'EQUIPPED_ITEM_INVALID';
 
-const gearSlots = ['mainHand', 'body', 'accessory'] as const;
 const starterSlots = ['mainHand', 'body'] as const;
-const statKeys = ['maxHp', 'maxMana', 'power', 'guard'] as const;
-
-function getEntry<T>(entries: Readonly<Partial<Record<string, T>>>, key: string): T | undefined {
-  return Object.hasOwn(entries, key) ? entries[key] : undefined;
-}
-
-function gearForSlot(item: ItemInfo, slot: GearSlot, template: TemplateId): GearItemInfo | undefined {
-  const gear = item.gear;
-  return item.kind === 'gear' && item.stackMax === 1 && gear?.slot === slot &&
-    (gear.template === null || gear.template === template) ? gear : undefined;
-}
 
 export function createNewGame(
   request: NewGameRequest, catalog: NewGameCatalog, location: Readonly<PlayerLocation>,
@@ -57,26 +44,4 @@ export function createNewGame(
     quests: {},
     npcBond: {},
   });
-}
-
-export function projectStats(state: PlayerState, catalog: NewGameCatalog): Result<Stats, ProjectStatsError> {
-  const hero = getEntry(catalog.heroes, state.heroId);
-  if (!hero) return err('UNKNOWN_HERO');
-  const template = getEntry(catalog.templates, hero.template);
-  if (!template) return err('UNKNOWN_TEMPLATE');
-
-  const stats = { ...template.base };
-  for (const slot of gearSlots) {
-    const id = state.equipped[slot];
-    if (id === undefined) continue;
-    const instance = state.gear.find((gear) => gear.id === id);
-    if (!instance) return err('EQUIPPED_INSTANCE_MISSING');
-    const item = getEntry(catalog.items, instance.defId);
-    if (!item) return err('EQUIPPED_ITEM_MISSING');
-    const gear = gearForSlot(item, slot, hero.template);
-    if (!gear) return err('EQUIPPED_ITEM_INVALID');
-    for (const key of statKeys) stats[key] += gear.stats[key] ?? 0;
-  }
-
-  return ok(stats);
 }

@@ -3,6 +3,7 @@ import { err, ok, type Result } from '../shared/result.ts';
 import { elementSchema } from './schema/element.ts';
 import { heroSchema } from './schema/hero.ts';
 import { itemSchema } from './schema/item.ts';
+import { progressionSchema } from './schema/progression.ts';
 import { recipeSchema } from './schema/recipe.ts';
 import { questSchema, type QuestDef } from './schema/quest.ts';
 import { stringsSchema } from './schema/strings.ts';
@@ -25,6 +26,7 @@ export const contentFiles = {
   quests: 'quests.json',
   strings: 'strings.en.json',
   templates: 'templates.json',
+  progression: 'progression.json',
 } as const;
 
 type Kind = keyof typeof contentFiles;
@@ -93,7 +95,7 @@ function checkQuestCycles(quests: Map<string, Located<QuestDef>>, errors: Valida
 
 export function validateContent(files: Readonly<Record<string, unknown>>): Result<Summary, ValidationError[]> {
   const errors: ValidationError[] = [];
-  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0 };
+  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0 };
   const absent: Kind[] = [];
   const allIds = new Map<string, { file: string; path: string }>();
   const idsByKind: Record<DefinitionKind, Set<string>> = {
@@ -239,6 +241,15 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     }
   } else {
     absent.push('templates');
+  }
+
+  const progressionFile = contentFiles.progression;
+  if (Object.hasOwn(files, progressionFile)) {
+    const parsed = progressionSchema.safeParse(files[progressionFile]);
+    if (parsed.success) counts.progression = 1;
+    else reportSchemaErrors(progressionFile, '$', parsed.error);
+  } else {
+    absent.push('progression');
   }
 
   // Check references independently so an invalid multiplier cannot hide an unknown ID.

@@ -10,14 +10,15 @@ Definition IDs match `^[a-z][a-z0-9_]{1,47}$` and are globally unique. Required 
 
 ## Schema location and shapes
 
-Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`. The templates kind uses an object with exactly the three v0.1 template keys in `templates.json`.
+Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`. The templates kind uses an object with exactly the three v0.1 template keys in `templates.json`. The progression kind uses one strict object in `progression.json`.
 
 | Kind | Fields chosen where the plan leaves the shape open |
 | --- | --- |
 | Elements | `nameKey` references an English string, `active` is boolean, `color` is a six-digit hex string, and `modifiers` is a map from existing element IDs to finite non-negative numbers. Multiplier semantics are deferred to M4-01. |
 | Heroes | `nameKey` and `archetypeKey` reference English strings. `atlas` and `portrait` are non-empty asset keys. |
 | Items | `nameKey` references an English string. `kind` and `icon` are non-empty strings. `price` is a non-negative integer. `stackMax` is 1–99. Gear requires a `gear` object and `stackMax: 1`. Other kinds forbid that object. Recipe backrefs are deferred. |
-| Templates | `close`, `ranged`, and `support` each have a `nameKey`, positive integer base stats, and `mainHand` and `body` starter item IDs. Starter references must point to gear in the matching slot whose template matches or is null. |
+| Templates | `close`, `ranged`, and `support` each have a `nameKey`, positive integer base stats, non-negative integer growth for the same four stats, and `mainHand` and `body` starter item IDs. Starter references must point to gear in the matching slot whose template matches or is null. |
+| Progression | `levelCap` is a positive safe integer. `xpToNext` has exactly `levelCap - 1` positive safe integers. `xpSources` contains positive safe integers for `gather`, `mine`, `harvest`, `craft`, `craftFirstBonus`, `upgrade`, and `befriend`. See [ADR-018](ADR-018-player-progression.md). |
 | Recipes | `station` is a non-empty string. `inputs` and `outputs` are non-empty arrays of `{ itemId, quantity }`, with unique item IDs within each array. `requirement` is a non-empty string or null. |
 | Quests | `prereqs` and `next` are arrays of quest IDs. `objectives` contains `{ kind, count }`. `reward` contains `{ coins, items }`, with items using the recipe stack shape. `peacefulAlternative` is a non-empty string or null. |
 
@@ -25,7 +26,7 @@ Objective counts and item quantities are positive safe integers. Prices and rewa
 
 ## Validator contract
 
-`validateContent(files)` accepts a filename-keyed record of parsed JSON and returns `Result<Summary, ValidationError[]>`. A successful summary includes counts for every kind and lists absent kinds separately from present empty arrays. An error has `file`, a JSON path rooted at `$`, `code`, and `message`. Codes are `SCHEMA`, `ID_FORMAT`, `ID_PREFIX`, `DUPLICATE_ID`, `MISSING_REF`, `QUEST_CYCLE`, `UNKNOWN_FILE`, `PARSE` (CLI JSON syntax errors), and `UNREACHABLE`, `SPAWN_ON_EXIT`, and `SPAWN_NEAR_EXIT` (maps).
+`validateContent(files)` accepts a filename-keyed record of parsed JSON and returns `Result<Summary, ValidationError[]>`. A successful summary includes counts for every kind and lists absent kinds separately from present empty arrays. A valid progression object counts as one. An error has `file`, a JSON path rooted at `$`, `code`, and `message`. Codes are `SCHEMA`, `ID_FORMAT`, `ID_PREFIX`, `DUPLICATE_ID`, `MISSING_REF`, `QUEST_CYCLE`, `UNKNOWN_FILE`, `PARSE` (CLI JSON syntax errors), and `UNREACHABLE`, `SPAWN_ON_EXIT`, and `SPAWN_NEAR_EXIT` (maps).
 
 The validator checks definition IDs, references from structurally valid entries, modifier keys even when their values are invalid, and cycles in quest prerequisites. The CLI checks top-level files against the exact supported filenames, including case and extension. The CLI defaults to `src/content/data/` and skips the repository's `.gitkeep` marker there. It reports counts and absent kinds, and exits 1 on an error. `npm run build` invokes it first. Production content may be absent at M0-05. Game data for these kinds is decided in later tasks.
 
