@@ -6,11 +6,11 @@ Date: 2026-11-25
 
 ## IDs
 
-Definition IDs match `^[a-z][a-z0-9_]{1,47}$` and are globally unique. Required prefixes are `elem_`, `hero_`, `item_`, `recipe_`, and `q_`. Future kinds reserve `creature_`, `npc_`, `res_`, `crop_`, `map_`, and `enc_`.
+Definition IDs match `^[a-z][a-z0-9_]{1,47}$` and are globally unique. Required prefixes are `elem_`, `hero_`, `item_`, `recipe_`, `q_`, and `res_`. Future kinds reserve `creature_`, `npc_`, `crop_`, `map_`, and `enc_`.
 
 ## Schema location and shapes
 
-Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The five definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`. The templates kind uses an object with exactly the three v0.1 template keys in `templates.json`. The progression kind uses one strict object in `progression.json`.
+Under decision D2, Zod schemas and their inferred content types live in `src/content/schema/`. Domain code receives validated plain objects via the future mapping in M1-02. The definition files are arrays of strict definitions. The strings kind uses a flat object in `strings.en.json`. The templates kind uses an object with exactly the three v0.1 template keys in `templates.json`. The progression kind uses one strict object in `progression.json`.
 
 | Kind | Fields chosen where the plan leaves the shape open |
 | --- | --- |
@@ -19,6 +19,7 @@ Under decision D2, Zod schemas and their inferred content types live in `src/con
 | Items | `nameKey` references an English string. `kind` is one of `material`, `gear`, `consumable`, and `quest`. `icon` is non-empty. `price` is a non-negative integer and must be 0 for quest items. `stackMax` is 1–99. Gear requires a `gear` object and `stackMax: 1`. Other kinds forbid that object. Recipe backrefs are deferred. |
 | Templates | `close`, `ranged`, and `support` each have a `nameKey`, positive integer base stats, non-negative integer growth for the same four stats, and `mainHand` and `body` starter item IDs. Starter references must point to gear in the matching slot whose template matches or is null. |
 | Progression | `levelCap` is a positive safe integer. `xpToNext` has exactly `levelCap - 1` positive safe integers. `xpSources` contains positive safe integers for `gather`, `mine`, `harvest`, `craft`, `craftFirstBonus`, `upgrade`, and `befriend`. See [ADR-018](ADR-018-player-progression.md). |
+| Resource nodes | `resourceNodes.json` lists `gather` and `mine` nodes. Each references an existing ADR-017 raw material of the corresponding source, yields 1–9 items, and respawns after 1–7 game days. |
 | Recipes | `station` is a non-empty string. `inputs` and `outputs` are non-empty arrays of `{ itemId, quantity }`, with unique item IDs within each array. `requirement` is a non-empty string or null. |
 | Quests | `prereqs` and `next` are arrays of quest IDs. `objectives` contains `{ kind, count }`. `reward` contains `{ coins, items }`, with items using the recipe stack shape. `peacefulAlternative` is a non-empty string or null. |
 

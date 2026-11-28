@@ -17,7 +17,7 @@ test('CLI exits zero for valid content and prints its counts', () => {
   expect(result.error).toBeUndefined();
   expect(result.status).toBe(0);
   expect(result.stderr).toBe('');
-  expect(result.stdout).toContain('elements: 3\nheroes: 2\nitems: 4\nrecipes: 2\nquests: 3\nstrings: 12\ntemplates: 0 (absent)\nprogression: 1\nAbsent kinds: templates');
+  expect(result.stdout).toContain('elements: 3\nheroes: 2\nitems: 4\nrecipes: 2\nquests: 3\nstrings: 12\ntemplates: 0 (absent)\nprogression: 1\nresourceNodes: 0 (absent)\nAbsent kinds: templates, resourceNodes');
 });
 
 test('CLI exits one for invalid content and prints each diagnostic', () => {

@@ -33,6 +33,7 @@ const progression = progressionSchema.parse(readData('progression.json'));
 
 const catalog = deepFreeze<NewGameCatalog>({
   progression,
+  resourceNodes: {},
   heroes: Object.fromEntries(heroes.map((hero) => [hero.id, hero])),
   templates,
   items: Object.fromEntries(items.map((item) => [item.id, item])),
@@ -104,6 +105,7 @@ test('creates deterministic, independent state from frozen inputs and has a 24-s
 
 const minimal: NewGameCatalog = {
   progression,
+  resourceNodes: {},
   heroes: { [request.heroId]: { id: request.heroId, template: 'close' } },
   templates: {
     close: {

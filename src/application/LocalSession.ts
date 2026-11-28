@@ -1,4 +1,6 @@
 import { equip, unequip } from '@domain/equipment/equipment';
+import { harvest } from '@domain/gathering/harvest';
+import { getEntry } from '@domain/player/catalog';
 import { assignHotbar, moveSlot } from '@domain/inventory/layout';
 import { createNewGame } from '@domain/player/newGame';
 import type { NewGameCatalog, PlayerState } from '@domain/player/types';
@@ -46,7 +48,7 @@ export class LocalSession implements GameSession {
         if (!spawn) return err('MISSING_CHECKPOINT');
         const result = createNewGame(command, this.catalog, spawn);
         if (!result.ok) return result;
-        this.state = freezeTree({ phase: 'playing', player: result.value });
+        this.state = freezeTree({ phase: 'playing', player: result.value, world: { day: 1, resourceNodes: {} } });
         this.emit(Object.freeze({ type: 'GameStarted', heroId: result.value.heroId, mode: result.value.mode }));
         return ok(undefined);
       }
@@ -57,7 +59,7 @@ export class LocalSession implements GameSession {
         if (!exit) return err('UNKNOWN_EXIT');
         const spawn = this.maps.get(exit.targetMap)?.spawns.get(exit.targetSpawn);
         if (!spawn) return err('MISSING_CHECKPOINT');
-        this.state = freezeTree({ phase: 'playing', player: { ...player, location: { ...spawn } } });
+        this.state = freezeTree({ ...this.state, player: { ...player, location: { ...spawn } } });
         this.emit(Object.freeze({ type: 'MapChanged', mapId: spawn.mapId }));
         return ok(undefined);
       }
@@ -69,6 +71,31 @@ export class LocalSession implements GameSession {
         return this.changeInventory('InventoryChanged', (player) => moveSlot(player, command.from, command.to, this.catalog));
       case 'AssignHotbar':
         return this.changeInventory('InventoryChanged', (player) => assignHotbar(player, command.index, command.itemId, this.catalog));
+      case 'Gather': {
+        if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+        const { player, world } = this.state;
+        const node = getEntry(this.catalog.resourceNodes, command.nodeId);
+        if (!node) return err('UNKNOWN_NODE');
+        // M2-04b supplies the map's resource marker IDs. An empty set means the map has no nodes.
+        const placedNodes = this.maps.get(player.location.mapId)?.resourceNodeIds;
+        if (placedNodes && !placedNodes.has(node.id)) return err('NODE_NOT_ON_MAP');
+
+        const result = harvest(player, world, node, this.catalog);
+        if (!result.ok) return result;
+        const { player: nextPlayer, world: nextWorld, xp, levelsGained } = result.value;
+        this.state = freezeTree({ phase: 'playing', player: nextPlayer, world: nextWorld });
+        this.emit(Object.freeze({
+          type: 'ResourceGathered', nodeId: node.id, itemId: node.itemId, quantity: node.quantity, xp, levelsGained,
+        }));
+        return ok(undefined);
+      }
+      case 'EndDay': {
+        if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+        const world = { ...this.state.world, day: this.state.world.day + 1 };
+        this.state = freezeTree({ ...this.state, world });
+        this.emit(Object.freeze({ type: 'DayEnded', day: world.day }));
+        return ok(undefined);
+      }
       default: {
         const exhaustive: never = command;
         return exhaustive;
@@ -85,7 +112,7 @@ export class LocalSession implements GameSession {
     const result = change(player);
     if (!result.ok) return result;
     if (result.value === player) return ok(undefined);
-    this.state = freezeTree({ phase: 'playing', player: result.value });
+    this.state = freezeTree({ ...this.state, player: result.value });
     this.emit(Object.freeze({ type }));
     return ok(undefined);
   }

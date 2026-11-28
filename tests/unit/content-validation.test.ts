@@ -77,8 +77,8 @@ test('valid content reports exact counts', () => {
   expect(validateContent(readFixture('valid'))).toEqual({
     ok: true,
     value: {
-      counts: { elements: 3, heroes: 2, items: 4, recipes: 2, quests: 3, strings: 12, templates: 0, progression: 1 },
-      absent: ['templates'],
+      counts: { elements: 3, heroes: 2, items: 4, recipes: 2, quests: 3, strings: 12, templates: 0, progression: 1, resourceNodes: 0 },
+      absent: ['resourceNodes', 'templates'],
     },
   });
 });
@@ -87,8 +87,8 @@ test('an empty present file differs from an absent kind', () => {
   expect(validateContent({ 'items.json': [] })).toEqual({
     ok: true,
     value: {
-      counts: { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0 },
-      absent: ['elements', 'heroes', 'recipes', 'quests', 'strings', 'templates', 'progression'],
+      counts: { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0, resourceNodes: 0 },
+      absent: ['elements', 'heroes', 'recipes', 'quests', 'resourceNodes', 'strings', 'templates', 'progression'],
     },
   });
 });

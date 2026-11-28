@@ -334,5 +334,117 @@
       },
       "template": null
     }
+  },
+  {
+    "id": "item_oak_log",
+    "nameKey": "item.oak_log.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_oak_log",
+    "price": 6
+  },
+  {
+    "id": "item_resin",
+    "nameKey": "item.resin.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_resin",
+    "price": 8
+  },
+  {
+    "id": "item_silverleaf",
+    "nameKey": "item.silverleaf.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_silverleaf",
+    "price": 8
+  },
+  {
+    "id": "item_moonpetal",
+    "nameKey": "item.moonpetal.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_moonpetal",
+    "price": 12
+  },
+  {
+    "id": "item_reed_fiber",
+    "nameKey": "item.reed_fiber.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_reed_fiber",
+    "price": 6
+  },
+  {
+    "id": "item_glow_moss",
+    "nameKey": "item.glow_moss.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_glow_moss",
+    "price": 10
+  },
+  {
+    "id": "item_soft_feather",
+    "nameKey": "item.soft_feather.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_soft_feather",
+    "price": 12
+  },
+  {
+    "id": "item_clay",
+    "nameKey": "item.clay.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_clay",
+    "price": 6
+  },
+  {
+    "id": "item_stone",
+    "nameKey": "item.stone.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_stone",
+    "price": 4
+  },
+  {
+    "id": "item_coal",
+    "nameKey": "item.coal.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_coal",
+    "price": 8
+  },
+  {
+    "id": "item_copper_ore",
+    "nameKey": "item.copper_ore.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_copper_ore",
+    "price": 10
+  },
+  {
+    "id": "item_iron_ore",
+    "nameKey": "item.iron_ore.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_iron_ore",
+    "price": 16
+  },
+  {
+    "id": "item_quartz",
+    "nameKey": "item.quartz.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_quartz",
+    "price": 18
+  },
+  {
+    "id": "item_starlite_ore",
+    "nameKey": "item.starlite_ore.name",
+    "kind": "material",
+    "stackMax": 99,
+    "icon": "icon_starlite_ore",
+    "price": 30
   }
 ]

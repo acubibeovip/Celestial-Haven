@@ -28,7 +28,7 @@ test.each(registry.heroes.flatMap(({ id }) => modes.map((mode) => ({ id, mode })
     if (!expected.ok) throw new Error(expected.error);
 
     expect(session.dispatch(command)).toEqual({ ok: true, value: undefined });
-    expect(session.snapshot()).toEqual({ phase: 'playing', player: expected.value });
+    expect(session.snapshot()).toEqual({ phase: 'playing', player: expected.value, world: { day: 1, resourceNodes: {} } });
   },
 );
 
