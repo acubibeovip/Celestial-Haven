@@ -3,7 +3,7 @@ import { createContentRegistry } from '../../src/application/ContentRegistry';
 import { createNewGameCatalog } from '../../src/application/createNewGameCatalog';
 import type { Mode, SessionCommand } from '../../src/application/GameSession';
 import { LocalSession } from '../../src/application/LocalSession';
-import { createReadyView } from '../../src/application/readyView';
+import { loadWorldMaps, readBundledMaps } from '../../src/infrastructure/maps/loadWorldMaps';
 import { readBundledContent } from '../../src/infrastructure/content/readBundledContent';
 import { createNewGame } from '@domain/player/newGame';
 
@@ -11,6 +11,10 @@ const result = createContentRegistry(readBundledContent());
 if (!result.ok) throw new Error(JSON.stringify(result.error));
 const registry = result.value;
 const catalog = createNewGameCatalog(registry);
+const loaded = loadWorldMaps(readBundledMaps());
+if (!loaded.ok) throw new Error(JSON.stringify(loaded.error));
+const maps = loaded.value;
+const initialLocation = { mapId: 'map_starbrook_village', x: 784, y: 280 };
 const modes: Mode[] = ['peaceful', 'adventure'];
 const start = { type: 'NewGame', heroId: 'hero_storm_monk', mode: 'peaceful' } as const;
 
@@ -18,8 +22,8 @@ test.each(registry.heroes.flatMap(({ id }) => modes.map((mode) => ({ id, mode })
   'commits the domain state for $id in $mode',
   ({ id, mode }) => {
     const command: SessionCommand = { type: 'NewGame', heroId: id, mode };
-    const session = new LocalSession(catalog);
-    const expected = createNewGame(command, catalog);
+    const session = new LocalSession(catalog, maps);
+    const expected = createNewGame(command, catalog, initialLocation);
     expect(expected.ok).toBe(true);
     if (!expected.ok) throw new Error(expected.error);
 
@@ -29,7 +33,7 @@ test.each(registry.heroes.flatMap(({ id }) => modes.map((mode) => ({ id, mode })
 );
 
 test('emits one GameStarted event after the new snapshot is committed', () => {
-  const session = new LocalSession(catalog);
+  const session = new LocalSession(catalog, maps);
   const initial = session.snapshot();
   const listener = vi.fn(() => session.snapshot());
   session.subscribe(listener);
@@ -45,7 +49,7 @@ test('emits one GameStarted event after the new snapshot is committed', () => {
 });
 
 test('rejections preserve the exact snapshot and emit nothing', () => {
-  const session = new LocalSession(catalog);
+  const session = new LocalSession(catalog, maps);
   const listener = vi.fn();
   session.subscribe(listener);
   const menu = session.snapshot();
@@ -69,7 +73,7 @@ test.each([
     ...catalog.items, item_training_blade: { id: 'item_training_blade', kind: 'material', stackMax: 1 },
   } }],
 ] as const)('propagates the %s domain error without committing or emitting', (error, badCatalog) => {
-  const session = new LocalSession(badCatalog);
+  const session = new LocalSession(badCatalog, maps);
   const menu = session.snapshot();
   const listener = vi.fn();
   session.subscribe(listener);
@@ -84,7 +88,7 @@ function isFrozenTree(value: unknown): boolean {
 }
 
 test('freezes the whole menu and playing snapshot tree', () => {
-  const session = new LocalSession(catalog);
+  const session = new LocalSession(catalog, maps);
   expect(isFrozenTree(session.snapshot())).toBe(true);
   session.dispatch(start);
   const state = session.snapshot();
@@ -100,7 +104,7 @@ test('reports a throwing listener once, keeps the commit, and calls others in or
   const failure = new Error('listener failed');
   const calls: string[] = [];
   const reportError = vi.fn(() => { calls.push('report'); });
-  const session = new LocalSession(catalog, reportError);
+  const session = new LocalSession(catalog, maps, reportError);
   session.subscribe(() => { calls.push('first'); throw failure; });
   session.subscribe(() => { calls.push(session.snapshot().phase); });
   session.subscribe(() => { calls.push('last'); });
@@ -111,7 +115,7 @@ test('reports a throwing listener once, keeps the commit, and calls others in or
 });
 
 test('allows self-unsubscription and removing a later listener during emission', () => {
-  const session = new LocalSession(catalog);
+  const session = new LocalSession(catalog, maps);
   const calls: string[] = [];
   const addedDuringEmission = vi.fn();
   const removeFirst = session.subscribe(() => {
@@ -128,15 +132,49 @@ test('allows self-unsubscription and removing a later listener during emission',
   expect(addedDuringEmission).not.toHaveBeenCalled();
 });
 
-test('derives Ready details from the committed snapshot', () => {
-  const session = new LocalSession(catalog);
-  expect(createReadyView(session.snapshot(), registry, catalog)).toBeNull();
+test('New Game checkpoints the village default at the D23 feet position', () => {
+  const session = new LocalSession(catalog, maps);
+  expect(session.dispatch(start).ok).toBe(true);
+  expect(session.snapshot()).toMatchObject({ phase: 'playing', player: { location: initialLocation } });
+});
+
+test('EnterExit commits the destination before MapChanged and the round trip returns to the arrival spawn', () => {
+  const session = new LocalSession(catalog, maps);
   session.dispatch(start);
-  expect(createReadyView(session.snapshot(), registry, catalog)).toEqual({
-    hero: 'Storm Monk',
-    mode: 'Peaceful',
-    level: 1,
-    equipped: ['Training Blade', "Traveler's Tunic"],
-    stats: { maxHp: 130, maxMana: 30, power: 15, guard: 12 },
+  const before = session.snapshot();
+  const listener = vi.fn(() => session.snapshot());
+  session.subscribe(listener);
+
+  expect(session.dispatch({ type: 'EnterExit', exitName: 'to_farm' }).ok).toBe(true);
+  expect(listener).toHaveBeenCalledExactlyOnceWith({ type: 'MapChanged', mapId: 'map_farm' });
+  expect(listener.mock.results[0]?.value).toBe(session.snapshot());
+  expect(listener.mock.results[0]?.value).toMatchObject({
+    phase: 'playing', player: { location: { mapId: 'map_farm', x: 112, y: 280 } },
   });
+  expect(before).toMatchObject({ phase: 'playing', player: { location: initialLocation } });
+
+  expect(session.dispatch({ type: 'EnterExit', exitName: 'to_village' }).ok).toBe(true);
+  expect(listener).toHaveBeenCalledTimes(2);
+  expect(session.snapshot()).toMatchObject({
+    phase: 'playing', player: { location: { mapId: 'map_starbrook_village', x: 1168, y: 280 } },
+  });
+  expect(isFrozenTree(session.snapshot())).toBe(true);
+});
+
+test('rejects exit commands while in the menu and exits absent from the current map', () => {
+  const session = new LocalSession(catalog, maps);
+  const listener = vi.fn();
+  session.subscribe(listener);
+  const exit = { type: 'EnterExit', exitName: 'to_village' } as const;
+  const menu = session.snapshot();
+  expect(session.dispatch(exit)).toEqual({ ok: false, error: 'NOT_PLAYING' });
+  expect(session.snapshot()).toBe(menu);
+  expect(listener).not.toHaveBeenCalled();
+
+  session.dispatch(start);
+  listener.mockClear();
+  const village = session.snapshot();
+  expect(session.dispatch(exit)).toEqual({ ok: false, error: 'UNKNOWN_EXIT' });
+  expect(session.snapshot()).toBe(village);
+  expect(listener).not.toHaveBeenCalled();
 });

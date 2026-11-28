@@ -51,7 +51,14 @@ export interface GearInstance {
   upgrade: number;
 }
 
+export interface PlayerLocation {
+  mapId: string;
+  x: number;
+  y: number;
+}
+
 export interface PlayerState {
+  location: PlayerLocation;
   heroId: string;
   mode: Mode;
   level: number;

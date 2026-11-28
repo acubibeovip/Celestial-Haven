@@ -34,6 +34,8 @@ const cases: Record<string, [ValidationError['code'], string][]> = {
   'duplicate-spawn': [['SCHEMA', `${marker}[1].name`]],
   'missing-default': [['SCHEMA', marker]],
   'bad-coordinate': [['SCHEMA', `${marker}[0]`]],
+  'spawn-near-exit': [['SPAWN_NEAR_EXIT', `${marker}[0]`]],
+  'spawn-on-exit': [['SPAWN_ON_EXIT', `${marker}[0]`]],
   'spawn-on-solid': [['SCHEMA', `${marker}[0]`]],
   'exit-on-solid': [['SCHEMA', `${marker}[1]`]],
   'unknown-map': [['MISSING_REF', `${marker}[1].properties[1].value`]],

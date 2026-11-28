@@ -13,6 +13,9 @@ const mapSizes = new Map<string, readonly [number, number]>([
   ['map_star_shrine', [20, 16]],
 ]);
 
+export const requiredMapIds = [...mapSizes.keys()];
+export const mapNameKey = (mapId: string): string => `map.${mapId.slice(4)}.name`;
+
 function property(marker: MapMarker, name: string, path: string) {
   const index = marker.properties?.findIndex((value) => value.name === name) ?? -1;
   const entry = marker.properties?.[index];
@@ -98,6 +101,9 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
   const markers = layers[3].objects;
   const localSpawns = spawnNames(markers);
   const seenSpawns = new Set<string>();
+  const seenExits = new Set<string>();
+  const exitTiles = markers.filter((marker) => property(marker, 'type', '').value === 'exit')
+    .map(({ x, y }) => ({ x: Math.floor(x / TILE_SIZE), y: Math.floor(y / TILE_SIZE) }));
   const walkableMarkers: { path: string; tile: number }[] = [];
   const objectsPath = '$.layers[3].objects';
   let defaultTile: number | undefined;
@@ -118,6 +124,9 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
       seenSpawns.add(marker.name);
     } else if (type.value === 'exit') {
       exits++;
+      if (!marker.name.trim()) issue(`${path}.name`, 'Exit names must be non-empty.');
+      if (seenExits.has(marker.name)) issue(`${path}.name`, `Duplicate exit "${marker.name}".`);
+      seenExits.add(marker.name);
       const map = property(marker, 'targetMap', path);
       const spawn = property(marker, 'targetSpawn', path);
       if (!map.value) issue(map.path, 'An exit requires a non-empty string targetMap.');
@@ -139,6 +148,13 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
     if (x < 0 || x >= width || y < 0 || y >= height) {
       issue(path, 'Marker must be within map bounds.');
       return;
+    }
+    if (type.value === 'spawn') {
+      if (exitTiles.some((tile) => tile.x === x && tile.y === y)) {
+        issue(path, 'A spawn may not share a tile with an exit.', 'SPAWN_ON_EXIT');
+      } else if (exitTiles.some((tile) => Math.max(Math.abs(tile.x - x), Math.abs(tile.y - y)) < 3)) {
+        issue(path, 'A spawn must be at least three tiles from every exit, including diagonally.', 'SPAWN_NEAR_EXIT');
+      }
     }
     if (collision.length !== cellCount) return;
     const tile = y * width + x;

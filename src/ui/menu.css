@@ -167,42 +167,6 @@ h1:focus { outline: none; }
   background: radial-gradient(circle at calc(100% - 10px) center, var(--gold) 0 6px, transparent 7px);
 }
 
-.ready-note { margin-top: 12px; }
-.ready-hero { margin-top: 26px; }
-
-.ready-details {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 9px 18px;
-}
-
-.ready-identity {
-  grid-template-columns: repeat(2, auto minmax(0, 1fr));
-  max-width: 380px;
-  margin-top: 14px;
-}
-
-.ready-details dt { color: var(--gold); }
-.ready-details dd { margin: 0; overflow-wrap: anywhere; }
-
-.ready-groups {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
-  gap: 12px;
-  margin-top: 23px;
-}
-
-.ready-group {
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: #2b233a;
-}
-
-.ready-group h2 { margin-bottom: 11px; font-size: 1.3rem; }
-.ready-group ul { margin: 0; padding-inline-start: 20px; }
-.ready-group li + li { margin-top: 7px; }
-
 .menu-error { grid-column: 1 / -1; color: #ffbdba; }
 
 .errors { overflow-wrap: anywhere; }

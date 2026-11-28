@@ -5,7 +5,7 @@ import { indexMapSpawns, validateMap } from '../src/content/validateMap.ts';
 import type { ValidationError } from '../src/content/validate.ts';
 
 async function run(): Promise<number> {
-  const { values: { dir } } = parseArgs({ options: { dir: { type: 'string', default: 'public/maps' } } });
+  const { values: { dir } } = parseArgs({ options: { dir: { type: 'string', default: 'src/content/maps' } } });
   const maps = new Map<string, unknown>();
   const errors: ValidationError[] = [];
   let entries;

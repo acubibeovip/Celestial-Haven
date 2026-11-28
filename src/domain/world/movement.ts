@@ -17,6 +17,13 @@ export function spawnPosition(tileX: number, tileY: number): Position {
   return { x: tileX * TILE_SIZE + 16, y: tileY * TILE_SIZE + 24 };
 }
 
+export function overlapsTile(position: Position, tileX: number, tileY: number, tileSize: number): boolean {
+  const left = tileX * tileSize;
+  const top = tileY * tileSize;
+  return position.x + PLAYER_WIDTH / 2 > left && position.x - PLAYER_WIDTH / 2 < left + tileSize
+    && position.y > top && position.y - PLAYER_HEIGHT < top + tileSize;
+}
+
 function isFinitePosition(value: Position | MovementIntent): boolean {
   return Number.isFinite(value.x) && Number.isFinite(value.y);
 }

@@ -40,7 +40,7 @@ export type ValidationError = {
   file: string;
   path: string;
   code: 'SCHEMA' | 'ID_FORMAT' | 'ID_PREFIX' | 'DUPLICATE_ID' | 'MISSING_REF' |
-    'QUEST_CYCLE' | 'UNKNOWN_FILE' | 'PARSE' | 'UNREACHABLE';
+    'QUEST_CYCLE' | 'UNKNOWN_FILE' | 'PARSE' | 'UNREACHABLE' | 'SPAWN_ON_EXIT' | 'SPAWN_NEAR_EXIT';
   message: string;
 };
 

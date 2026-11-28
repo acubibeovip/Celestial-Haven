@@ -48,15 +48,18 @@ test('content-inferred types are assignable to domain-owned interfaces', () => {
   expectTypeOf<ItemDef>().toExtend<ItemInfo>();
 });
 
+const initialLocation = Object.freeze({ mapId: 'map_starbrook_village', x: 784, y: 280 });
+
 test.each(heroes.flatMap(({ id, template }) => modes.map((mode) => ({ id, mode, template }))))(
   'creates the $template starter state for $id in $mode',
   ({ id, mode, template }) => {
     const { weapon, stats } = expected[template];
-    const result = createNewGame({ heroId: id, mode }, catalog);
+    const result = createNewGame({ heroId: id, mode }, catalog, initialLocation);
     if (!result.ok) throw new Error(result.error);
 
     expect(result.value).toEqual({
       heroId: id,
+      location: initialLocation,
       mode,
       level: 1,
       xp: 0,
@@ -77,14 +80,14 @@ test.each(heroes.flatMap(({ id, template }) => modes.map((mode) => ({ id, mode, 
 );
 
 const request = deepFreeze<NewGameRequest>({ heroId: 'hero_storm_monk', mode: 'peaceful' });
-const starterState = createNewGame(request, catalog);
+const starterState = createNewGame(request, catalog, initialLocation);
 if (!starterState.ok) throw new Error(starterState.error);
 const state = deepFreeze(starterState.value);
 
 test('creates deterministic, independent state from frozen inputs and has a 24-slot bag limit', () => {
   const before = JSON.stringify({ request, catalog });
-  const first = createNewGame(request, catalog);
-  const second = createNewGame(request, catalog);
+  const first = createNewGame(request, catalog, initialLocation);
+  const second = createNewGame(request, catalog, initialLocation);
   expect(first).toEqual(second);
   if (!first.ok || !second.ok) throw new Error('Expected starter states');
 
@@ -111,7 +114,7 @@ test.each([
   ['MISSING_STARTER_ITEM', { ...minimal, items: { weapon: minimal.items.weapon } }],
   ['STARTER_ITEM_INVALID', { ...minimal, items: { ...minimal.items, tunic: minimal.items.weapon } }],
 ] as const)('rejects bad New Game catalogs with %s', (error, badCatalog) => {
-  expect(createNewGame(request, deepFreeze(badCatalog))).toEqual({ ok: false, error });
+  expect(createNewGame(request, deepFreeze(badCatalog), initialLocation)).toEqual({ ok: false, error });
 });
 
 test('does not count unequipped gear or upgrade levels in projected stats', () => {

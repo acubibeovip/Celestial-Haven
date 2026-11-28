@@ -1,6 +1,6 @@
 import { err, ok, type Result } from '@shared/result';
 import type {
-  GearItemInfo, GearSlot, ItemInfo, NewGameCatalog, NewGameRequest, PlayerState, Stats, TemplateId,
+  GearItemInfo, GearSlot, ItemInfo, NewGameCatalog, NewGameRequest, PlayerLocation, PlayerState, Stats, TemplateId,
 } from './types';
 
 export type NewGameError = 'UNKNOWN_HERO' | 'UNKNOWN_TEMPLATE' | 'MISSING_STARTER_ITEM' | 'STARTER_ITEM_INVALID';
@@ -21,7 +21,9 @@ function gearForSlot(item: ItemInfo, slot: GearSlot, template: TemplateId): Gear
     (gear.template === null || gear.template === template) ? gear : undefined;
 }
 
-export function createNewGame(request: NewGameRequest, catalog: NewGameCatalog): Result<PlayerState, NewGameError> {
+export function createNewGame(
+  request: NewGameRequest, catalog: NewGameCatalog, location: Readonly<PlayerLocation>,
+): Result<PlayerState, NewGameError> {
   const hero = getEntry(catalog.heroes, request.heroId);
   if (!hero) return err('UNKNOWN_HERO');
   const template = getEntry(catalog.templates, hero.template);
@@ -41,6 +43,7 @@ export function createNewGame(request: NewGameRequest, catalog: NewGameCatalog):
   }
 
   return ok({
+    location: { ...location },
     heroId: request.heroId,
     mode: request.mode,
     level: 1,

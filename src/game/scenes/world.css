@@ -1,0 +1,24 @@
+#game.world-active {
+  background: #181c2c;
+  overflow: hidden;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+#game.world-active:focus { outline: none; }
+#game.world-active canvas { image-rendering: pixelated; }
+
+.world-map-name {
+  position: absolute;
+  z-index: 6;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border: 1px solid #c9a96e;
+  border-radius: 8px;
+  background: #1d1b2de8;
+  color: #f5ebd8;
+  box-shadow: 0 4px 15px #11132260;
+  white-space: nowrap;
+}
