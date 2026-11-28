@@ -47,6 +47,9 @@ export class World extends Phaser.Scene {
     const initials = this.add.text(0, -23, hero.initials, {
       fontFamily: 'sans-serif', fontSize: '12px', color: '#181823', fontStyle: 'bold',
     }).setOrigin(0.5);
+    const canvas = this.game.canvas;
+    canvas.dataset.heroInitials = hero.initials;
+    canvas.dataset.heroElementColor = hero.color;
     this.marker = this.add.container(0, 0, [chip, initials]).setDepth(1);
 
     const name = document.createElement('p');
@@ -68,6 +71,8 @@ export class World extends Phaser.Scene {
       unsubscribe();
       controls.destroy();
       name.remove();
+      delete canvas.dataset.heroInitials;
+      delete canvas.dataset.heroElementColor;
       host.removeAttribute('aria-busy');
       document.removeEventListener('visibilitychange', resetTiming);
       this.cameras.main.resetFX();

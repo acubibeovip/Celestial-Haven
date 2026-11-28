@@ -29,8 +29,13 @@ npx playwright install chromium
 | `npm run preview` | Serve the built game for local inspection. |
 | `npm run test:prototype` | Test the dev-only map prototype and capture both sprite cell sizes. |
 | `npm run test:e2e` | Test the built game in Chromium. Run `npm run build` first. |
+| `npm run check:m1-build` | Build and run the M1 production smoke checks. |
 
 Asset validation and itch.io packaging are deferred to M6-03 and M7-01, respectively.
+
+## M1 local build check
+
+Run `npm run check:m1-build` after installing Chromium. Playwright starts Vite preview, serves `dist/` at `http://127.0.0.1:4173/itch-preview/`, and loads the game in an iframe. The offline case blocks network requests after the title loads, then starts a New Game and walks from Starbrook Village to Farm. [M1 acceptance evidence](docs/qa/M1-acceptance.md)
 
 ## CI
 

@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "check:m1-build": "npm run build && npm run test:e2e -- tests/e2e/boot.spec.ts tests/e2e/m1-acceptance.spec.ts",
     "build": "npm run validate:content && npm run validate:maps && vite build",
     "preview": "vite preview",
     "validate:content": "node tools/validate-content.ts",
