@@ -390,7 +390,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [x] M1-05: Test T01/T02, mobile control smoke; build local.
 
 ### M2 — Progression / economy vertical slice
-- [ ] M2-01: Player stats, level/XP, gain from non-combat activities.
+- [x] M2-01: Player stats, level/XP, gain from non-combat activities.
 - [ ] M2-02: Inventory stack, 24 slots, hotbar, atomic ops.
 - [ ] M2-03: Gear instances, equip slots and stat projection.
 - [ ] M2-04: Gathering + mining node lifecycle, interact and respawn.

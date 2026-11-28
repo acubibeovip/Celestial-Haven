@@ -1,6 +1,6 @@
 # ADR-018 Player progression
 
-Status: Proposed
+Status: Accepted (owner accepted D35 growth values; numbers provisional)
 
 The numbers are provisional. [ADR-017 §6](ADR-017-m2-content.md#6-levels-and-xp) defines the level cap, XP thresholds, and provisional sources. [ADR-012](ADR-012-templates-and-starter-gear.md) defines base stats and starter gear.
 
