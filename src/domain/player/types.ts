@@ -32,6 +32,7 @@ export interface TemplateInfo {
 
 export interface GearItemInfo {
   slot: GearSlot;
+  upgradeTier: 'copper' | 'iron' | 'starlite';
   stats: { [Stat in keyof Stats]?: number | undefined };
   template: TemplateId | null;
 }

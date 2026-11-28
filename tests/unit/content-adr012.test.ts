@@ -34,12 +34,13 @@ test('real templates match ADR-012 base stats, starter gear mappings, and D35 gr
 });
 
 test('real starter gear matches ADR-012 slots, template restrictions, and bonuses', () => {
-  const items = z.array(itemSchema).parse(readData('items.json'));
+  const starterIds = new Set(['item_training_blade', 'item_willow_shortbow', 'item_lantern_focus', 'item_traveler_tunic']);
+  const items = z.array(itemSchema).parse(readData('items.json')).filter(({ id }) => starterIds.has(id));
   expect(items.map(({ id, gear }) => [id, gear])).toEqual([
-    ['item_training_blade', { slot: 'mainHand', template: 'close', stats: { power: 3 } }],
-    ['item_willow_shortbow', { slot: 'mainHand', template: 'ranged', stats: { power: 3 } }],
-    ['item_lantern_focus', { slot: 'mainHand', template: 'support', stats: { power: 1, maxMana: 10 } }],
-    ['item_traveler_tunic', { slot: 'body', template: null, stats: { guard: 2, maxHp: 10 } }],
+    ['item_training_blade', { slot: 'mainHand', upgradeTier: 'copper', template: 'close', stats: { power: 3 } }],
+    ['item_willow_shortbow', { slot: 'mainHand', upgradeTier: 'copper', template: 'ranged', stats: { power: 3 } }],
+    ['item_lantern_focus', { slot: 'mainHand', upgradeTier: 'copper', template: 'support', stats: { power: 1, maxMana: 10 } }],
+    ['item_traveler_tunic', { slot: 'body', upgradeTier: 'copper', template: null, stats: { guard: 2, maxHp: 10 } }],
   ]);
   for (const { id, kind, stackMax, icon, price } of items) {
     expect({ kind, stackMax, icon, price }).toEqual({

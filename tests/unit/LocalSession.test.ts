@@ -178,3 +178,93 @@ test('rejects exit commands while in the menu and exits absent from the current 
   expect(session.snapshot()).toBe(village);
   expect(listener).not.toHaveBeenCalled();
 });
+
+const tonic = { id: 'item_test_tonic', kind: 'consumable', stackMax: 10 } as const;
+const inventoryCatalog = { ...catalog, items: { ...catalog.items, [tonic.id]: tonic } };
+const inventoryCommands = [
+  { type: 'Equip', gearId: 'g1' },
+  { type: 'Unequip', slot: 'mainHand' },
+  { type: 'MoveBagSlot', from: 0, to: 3 },
+  { type: 'AssignHotbar', index: 2, itemId: tonic.id },
+] as const satisfies readonly SessionCommand[];
+
+test.each(inventoryCommands)('$type returns NOT_PLAYING before New Game', (command) => {
+  const session = new LocalSession(inventoryCatalog, maps);
+  const initial = session.snapshot();
+  const listener = vi.fn();
+  session.subscribe(listener);
+  expect(session.dispatch(command)).toEqual({ ok: false, error: 'NOT_PLAYING' });
+  expect(session.snapshot()).toBe(initial);
+  expect(listener).not.toHaveBeenCalled();
+});
+
+const afterUnequip = { type: 'Unequip', slot: 'mainHand' } as const satisfies SessionCommand;
+const starterBagGear = { kind: 'gear', gearId: 'g1' };
+
+test.each([
+  { command: inventoryCommands[0], setup: afterUnequip, event: 'EquipmentChanged',
+    expected: { equipped: { mainHand: 'g1', body: 'g2' }, bag: Array<null>(24).fill(null) } },
+  { command: inventoryCommands[1], setup: null, event: 'EquipmentChanged',
+    expected: { equipped: { body: 'g2' }, bag: [starterBagGear, ...Array<null>(23).fill(null)] } },
+  { command: inventoryCommands[2], setup: afterUnequip, event: 'InventoryChanged',
+    expected: { bag: [null, null, null, starterBagGear, ...Array<null>(20).fill(null)] } },
+  { command: inventoryCommands[3], setup: null, event: 'InventoryChanged',
+    expected: { hotbar: [null, null, tonic.id, null] } },
+] as const)('$command.type commits before emitting exactly one $event', ({ command, setup, event, expected }) => {
+  const session = new LocalSession(inventoryCatalog, maps);
+  expect(session.dispatch(start).ok).toBe(true);
+  if (setup) expect(session.dispatch(setup).ok).toBe(true);
+  const before = session.snapshot();
+  const listener = vi.fn(() => session.snapshot());
+  session.subscribe(listener);
+
+  expect(session.dispatch(command)).toEqual({ ok: true, value: undefined });
+  const after = session.snapshot();
+  expect(after).not.toBe(before);
+  expect(after).toMatchObject({ phase: 'playing', player: expected });
+  expect(listener).toHaveBeenCalledExactlyOnceWith({ type: event });
+  expect(listener.mock.results[0]?.value).toBe(after);
+  if (after.phase !== 'playing') throw new Error('Expected playing snapshot');
+  expect(Object.isFrozen(after.player.bag)).toBe(true);
+  expect(Object.isFrozen(after.player.equipped)).toBe(true);
+  expect(Object.isFrozen(after.player.hotbar)).toBe(true);
+});
+
+test.each([
+  [{ type: 'Equip', gearId: 'g1' }, 'GEAR_NOT_IN_BAG'],
+  [{ type: 'Unequip', slot: 'accessory' }, 'SLOT_EMPTY'],
+  [{ type: 'MoveBagSlot', from: 0, to: 24 }, 'INVALID_SLOT'],
+  [{ type: 'AssignHotbar', index: 0, itemId: 'item_training_blade' }, 'WRONG_ITEM_KIND'],
+  [{ type: 'AssignHotbar', index: 0, itemId: 'missing' }, 'UNKNOWN_ITEM'],
+] as const)('inventory rejection %j propagates %s without changing the snapshot or emitting', (command, error) => {
+  const session = new LocalSession(inventoryCatalog, maps);
+  expect(session.dispatch(start).ok).toBe(true);
+  const before = session.snapshot();
+  const listener = vi.fn();
+  session.subscribe(listener);
+
+  expect(session.dispatch(command)).toEqual({ ok: false, error });
+  expect(session.snapshot()).toBe(before);
+  expect(listener).not.toHaveBeenCalled();
+});
+
+test('successful no-op inventory commands preserve snapshot identity and emit nothing', () => {
+  const session = new LocalSession(inventoryCatalog, maps);
+  expect(session.dispatch(start).ok).toBe(true);
+  expect(session.dispatch(afterUnequip).ok).toBe(true);
+  expect(session.dispatch(inventoryCommands[3]).ok).toBe(true);
+  const before = session.snapshot();
+  const listener = vi.fn();
+  session.subscribe(listener);
+
+  for (const command of [
+    { type: 'MoveBagSlot', from: 0, to: 0 },
+    { type: 'MoveBagSlot', from: 1, to: 0 },
+    inventoryCommands[3],
+    { type: 'AssignHotbar', index: 0, itemId: null },
+  ] as const) {
+    expect(session.dispatch(command)).toEqual({ ok: true, value: undefined });
+    expect(session.snapshot()).toBe(before);
+  }
+  expect(listener).not.toHaveBeenCalled();
+});

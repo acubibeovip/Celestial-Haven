@@ -40,7 +40,7 @@ Definition files use fields ending in `Key` for player-facing text. The validato
 
 `strings.en.json` is a flat object. Keys match `^[a-z][a-z0-9_]*(\.[a-z0-9_]+)*$` and values are non-empty strings. An invalid object, key, or value reports `SCHEMA`. Unused keys are allowed for UI text. Other locales are deferred. Element and hero keys use the definition ID without its kind prefix in `element.<id>.name`, `hero.<id>.name`, and `hero.<id>.archetype`.
 
-Gear data records its slot, a template ID or null, and at least one non-negative integer stat among `power`, `guard`, `maxHp`, and `maxMana`. Starting content and state semantics are recorded in [ADR-012](ADR-012-templates-and-starter-gear.md).
+Gear data records its slot, its upgrade tier (`copper`, `iron`, or `starlite`), a template ID or null, and at least one non-negative integer stat among `power`, `guard`, `maxHp`, and `maxMana`. Starting content and state semantics are recorded in [ADR-012](ADR-012-templates-and-starter-gear.md).
 
 ## Map validation
 

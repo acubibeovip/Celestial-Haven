@@ -1,5 +1,7 @@
+import { equip, unequip } from '@domain/equipment/equipment';
+import { assignHotbar, moveSlot } from '@domain/inventory/layout';
 import { createNewGame } from '@domain/player/newGame';
-import type { NewGameCatalog } from '@domain/player/types';
+import type { NewGameCatalog, PlayerState } from '@domain/player/types';
 import { START_MAP_ID, type MapCatalog } from './MapCatalog';
 import { err, ok, type Result } from '@shared/result';
 import type { GameSession, SessionCommand, SessionError, SessionEvent, SessionListener, SessionState } from './GameSession';
@@ -59,11 +61,33 @@ export class LocalSession implements GameSession {
         this.emit(Object.freeze({ type: 'MapChanged', mapId: spawn.mapId }));
         return ok(undefined);
       }
+      case 'Equip':
+        return this.changeInventory('EquipmentChanged', (player) => equip(player, command.gearId, this.catalog));
+      case 'Unequip':
+        return this.changeInventory('EquipmentChanged', (player) => unequip(player, command.slot));
+      case 'MoveBagSlot':
+        return this.changeInventory('InventoryChanged', (player) => moveSlot(player, command.from, command.to, this.catalog));
+      case 'AssignHotbar':
+        return this.changeInventory('InventoryChanged', (player) => assignHotbar(player, command.index, command.itemId, this.catalog));
       default: {
         const exhaustive: never = command;
         return exhaustive;
       }
     }
+  }
+
+  private changeInventory(
+    type: 'EquipmentChanged' | 'InventoryChanged',
+    change: (player: Readonly<PlayerState>) => Result<PlayerState, SessionError>,
+  ): Result<void, SessionError> {
+    if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+    const { player } = this.state;
+    const result = change(player);
+    if (!result.ok) return result;
+    if (result.value === player) return ok(undefined);
+    this.state = freezeTree({ phase: 'playing', player: result.value });
+    this.emit(Object.freeze({ type }));
+    return ok(undefined);
   }
 
   private emit(event: SessionEvent): void {

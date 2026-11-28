@@ -3,6 +3,7 @@ import { count, templateId, text } from './common.ts';
 
 export const gearSchema = z.strictObject({
   slot: z.enum(['mainHand', 'body', 'accessory']),
+  upgradeTier: z.enum(['copper', 'iron', 'starlite']),
   stats: z.strictObject({
     power: count.optional(),
     guard: count.optional(),

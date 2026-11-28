@@ -20,6 +20,14 @@ export const sessionErrorKeys = {
   NOT_PLAYING: 'ui.session_error.not_playing',
   UNKNOWN_EXIT: 'ui.session_error.unknown_exit',
   MISSING_CHECKPOINT: 'ui.session_error.missing_checkpoint',
+  GEAR_NOT_IN_BAG: 'ui.session_error.gear_not_in_bag',
+  GEAR_INSTANCE_MISSING: 'ui.session_error.gear_instance_missing',
+  UNKNOWN_ITEM: 'ui.session_error.unknown_item',
+  WRONG_ITEM_KIND: 'ui.session_error.wrong_item_kind',
+  WRONG_TEMPLATE: 'ui.session_error.wrong_template',
+  SLOT_EMPTY: 'ui.session_error.slot_empty',
+  BAG_FULL: 'ui.session_error.bag_full',
+  INVALID_SLOT: 'ui.session_error.invalid_slot',
 } as const satisfies Record<SessionError, string>;
 
 const menuKeys = [

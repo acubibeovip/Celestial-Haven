@@ -29,6 +29,7 @@ const invalidCases: Record<string, Diagnostic[]> = {
   'template-missing-string': [['MISSING_REF', 'templates.json', '$.close.nameKey']],
   'gear-without-gear': [['SCHEMA', 'items.json', '$[0].gear']],
   'non-gear-with-gear': [['SCHEMA', 'items.json', '$[0].gear']],
+  'gear-missing-tier': [['SCHEMA', 'items.json', '$[0].gear.upgradeTier']],
   'gear-stackmax': [['SCHEMA', 'items.json', '$[0].stackMax']],
   'gear-empty-stats': [['SCHEMA', 'items.json', '$[0].gear.stats']],
   'gear-negative-stat': [['SCHEMA', 'items.json', '$[0].gear.stats.power']],

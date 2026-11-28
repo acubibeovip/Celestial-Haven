@@ -113,8 +113,8 @@ const minimal: NewGameCatalog = {
     },
   },
   items: {
-    weapon: { id: 'weapon', kind: 'gear', stackMax: 1, gear: { slot: 'mainHand', template: 'close', stats: { power: 1 } } },
-    tunic: { id: 'tunic', kind: 'gear', stackMax: 1, gear: { slot: 'body', template: null, stats: { guard: 1 } } },
+    weapon: { id: 'weapon', kind: 'gear', stackMax: 1, gear: { slot: 'mainHand', upgradeTier: 'copper', template: 'close', stats: { power: 1 } } },
+    tunic: { id: 'tunic', kind: 'gear', stackMax: 1, gear: { slot: 'body', upgradeTier: 'copper', template: null, stats: { guard: 1 } } },
   },
 };
 
