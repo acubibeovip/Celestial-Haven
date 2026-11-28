@@ -1,6 +1,6 @@
 [
-  {"id": "item_training_blade", "nameKey": "item.training_blade.name", "kind": "gear", "stackMax": 1, "icon": "icon_training_blade", "price": 0, "gear": {"slot": "mainHand", "stats": {"power": 3}, "template": "close"}},
-  {"id": "item_willow_shortbow", "nameKey": "item.willow_shortbow.name", "kind": "gear", "stackMax": 1, "icon": "icon_willow_shortbow", "price": 0, "gear": {"slot": "mainHand", "stats": {"power": 3}, "template": "ranged"}},
-  {"id": "item_lantern_focus", "nameKey": "item.lantern_focus.name", "kind": "gear", "stackMax": 1, "icon": "icon_lantern_focus", "price": 0, "gear": {"slot": "mainHand", "stats": {"power": 1, "maxMana": 10}, "template": "support"}},
-  {"id": "item_traveler_tunic", "nameKey": "item.traveler_tunic.name", "kind": "gear", "stackMax": 1, "icon": "icon_traveler_tunic", "price": 0, "gear": {"slot": "body", "stats": {"guard": 2, "maxHp": 10}, "template": null}}
+  {"id": "item_training_blade", "nameKey": "item.training_blade.name", "kind": "gear", "stackMax": 1, "icon": "icon_training_blade", "price": 0, "gear": {"upgradeTier": "copper", "slot": "mainHand", "stats": {"power": 3}, "template": "close"}},
+  {"id": "item_willow_shortbow", "nameKey": "item.willow_shortbow.name", "kind": "gear", "stackMax": 1, "icon": "icon_willow_shortbow", "price": 0, "gear": {"upgradeTier": "copper", "slot": "mainHand", "stats": {"power": 3}, "template": "ranged"}},
+  {"id": "item_lantern_focus", "nameKey": "item.lantern_focus.name", "kind": "gear", "stackMax": 1, "icon": "icon_lantern_focus", "price": 0, "gear": {"upgradeTier": "copper", "slot": "mainHand", "stats": {"power": 1, "maxMana": 10}, "template": "support"}},
+  {"id": "item_traveler_tunic", "nameKey": "item.traveler_tunic.name", "kind": "gear", "stackMax": 1, "icon": "icon_traveler_tunic", "price": 0, "gear": {"upgradeTier": "copper", "slot": "body", "stats": {"guard": 2, "maxHp": 10}, "template": null}}
 ]

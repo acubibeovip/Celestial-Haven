@@ -11,7 +11,8 @@
       "stats": {
         "power": 3
       },
-      "template": "close"
+      "template": "close",
+      "upgradeTier": "copper"
     }
   },
   {
@@ -26,7 +27,8 @@
       "stats": {
         "power": 3
       },
-      "template": "ranged"
+      "template": "ranged",
+      "upgradeTier": "copper"
     }
   },
   {
@@ -42,7 +44,8 @@
         "power": 1,
         "maxMana": 10
       },
-      "template": "support"
+      "template": "support",
+      "upgradeTier": "copper"
     }
   },
   {
@@ -57,6 +60,277 @@
       "stats": {
         "guard": 2,
         "maxHp": 10
+      },
+      "template": null,
+      "upgradeTier": "copper"
+    }
+  },
+  {
+    "id": "item_ironheart_blade",
+    "nameKey": "item.ironheart_blade.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_ironheart_blade",
+    "price": 200,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "iron",
+      "stats": {
+        "power": 6
+      },
+      "template": "close"
+    }
+  },
+  {
+    "id": "item_ironwood_longbow",
+    "nameKey": "item.ironwood_longbow.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_ironwood_longbow",
+    "price": 200,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "iron",
+      "stats": {
+        "power": 6
+      },
+      "template": "ranged"
+    }
+  },
+  {
+    "id": "item_prism_focus",
+    "nameKey": "item.prism_focus.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_prism_focus",
+    "price": 200,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "iron",
+      "stats": {
+        "power": 3,
+        "maxMana": 20
+      },
+      "template": "support"
+    }
+  },
+  {
+    "id": "item_starlite_edge",
+    "nameKey": "item.starlite_edge.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_starlite_edge",
+    "price": 400,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "starlite",
+      "stats": {
+        "power": 10
+      },
+      "template": "close"
+    }
+  },
+  {
+    "id": "item_starlite_bow",
+    "nameKey": "item.starlite_bow.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_starlite_bow",
+    "price": 400,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "starlite",
+      "stats": {
+        "power": 10
+      },
+      "template": "ranged"
+    }
+  },
+  {
+    "id": "item_starlite_focus",
+    "nameKey": "item.starlite_focus.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_starlite_focus",
+    "price": 400,
+    "gear": {
+      "slot": "mainHand",
+      "upgradeTier": "starlite",
+      "stats": {
+        "power": 5,
+        "maxMana": 30
+      },
+      "template": "support"
+    }
+  },
+  {
+    "id": "item_woven_jerkin",
+    "nameKey": "item.woven_jerkin.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_woven_jerkin",
+    "price": 60,
+    "gear": {
+      "slot": "body",
+      "upgradeTier": "copper",
+      "stats": {
+        "guard": 3,
+        "maxHp": 15
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_copper_ring_coat",
+    "nameKey": "item.copper_ring_coat.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_copper_ring_coat",
+    "price": 120,
+    "gear": {
+      "slot": "body",
+      "upgradeTier": "copper",
+      "stats": {
+        "guard": 5,
+        "maxHp": 10
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_mossweave_robe",
+    "nameKey": "item.mossweave_robe.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_mossweave_robe",
+    "price": 180,
+    "gear": {
+      "slot": "body",
+      "upgradeTier": "iron",
+      "stats": {
+        "guard": 2,
+        "maxHp": 10,
+        "maxMana": 15
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_iron_guard_mail",
+    "nameKey": "item.iron_guard_mail.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_iron_guard_mail",
+    "price": 260,
+    "gear": {
+      "slot": "body",
+      "upgradeTier": "iron",
+      "stats": {
+        "guard": 8,
+        "maxHp": 20
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_starlite_mantle",
+    "nameKey": "item.starlite_mantle.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_starlite_mantle",
+    "price": 450,
+    "gear": {
+      "slot": "body",
+      "upgradeTier": "starlite",
+      "stats": {
+        "guard": 10,
+        "maxHp": 30,
+        "maxMana": 10
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_copper_band",
+    "nameKey": "item.copper_band.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_copper_band",
+    "price": 50,
+    "gear": {
+      "slot": "accessory",
+      "upgradeTier": "copper",
+      "stats": {
+        "power": 1,
+        "guard": 1
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_feather_charm",
+    "nameKey": "item.feather_charm.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_feather_charm",
+    "price": 80,
+    "gear": {
+      "slot": "accessory",
+      "upgradeTier": "copper",
+      "stats": {
+        "maxHp": 15
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_silverleaf_pendant",
+    "nameKey": "item.silverleaf_pendant.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_silverleaf_pendant",
+    "price": 160,
+    "gear": {
+      "slot": "accessory",
+      "upgradeTier": "iron",
+      "stats": {
+        "maxHp": 10,
+        "maxMana": 10
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_moonpetal_brooch",
+    "nameKey": "item.moonpetal_brooch.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_moonpetal_brooch",
+    "price": 150,
+    "gear": {
+      "slot": "accessory",
+      "upgradeTier": "iron",
+      "stats": {
+        "maxMana": 20
+      },
+      "template": null
+    }
+  },
+  {
+    "id": "item_star_compass",
+    "nameKey": "item.star_compass.name",
+    "kind": "gear",
+    "stackMax": 1,
+    "icon": "icon_star_compass",
+    "price": 450,
+    "gear": {
+      "slot": "accessory",
+      "upgradeTier": "starlite",
+      "stats": {
+        "power": 2,
+        "guard": 2,
+        "maxHp": 10,
+        "maxMana": 10
       },
       "template": null
     }

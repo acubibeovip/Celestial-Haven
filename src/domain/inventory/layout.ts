@@ -3,7 +3,7 @@ import type { PlayerState } from '@domain/player/types';
 import { err, ok, type Result } from '@shared/result';
 import { BAG_CAPACITY, HOTBAR_CAPACITY, type ItemCatalog } from './types';
 
-type LayoutError = 'INVALID_SLOT' | 'UNKNOWN_ITEM' | 'WRONG_ITEM_KIND';
+export type LayoutError = 'INVALID_SLOT' | 'UNKNOWN_ITEM' | 'WRONG_ITEM_KIND';
 
 function validIndex(index: number, capacity: number): boolean {
   return Number.isInteger(index) && index >= 0 && index < capacity;

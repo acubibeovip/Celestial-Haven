@@ -1,3 +1,3 @@
 [
-  {"id": "item_training_blade", "nameKey": "item.training_blade.name", "kind": "gear", "stackMax": 1, "icon": "icon_training_blade", "price": 0, "gear": {"slot": "mainHand", "stats": {"power": -1}, "template": "close"}}
+  {"id": "item_training_blade", "nameKey": "item.training_blade.name", "kind": "gear", "stackMax": 1, "icon": "icon_training_blade", "price": 0, "gear": {"upgradeTier": "copper", "slot": "mainHand", "stats": {"power": -1}, "template": "close"}}
 ]

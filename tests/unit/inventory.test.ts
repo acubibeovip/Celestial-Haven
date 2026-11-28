@@ -7,6 +7,7 @@ import { checkBagInvariants, countItem } from '@domain/inventory/checkBagInvaria
 import { assignHotbar, moveSlot } from '@domain/inventory/layout';
 import { BAG_CAPACITY, HOTBAR_CAPACITY, type BagChange, type BagSlot, type ItemStack } from '@domain/inventory/types';
 import type { ItemInfo, PlayerState } from '@domain/player/types';
+import { randomForSeed } from '../helpers/seededRandom';
 
 const items = {
   ore: { id: 'ore', kind: 'material', stackMax: 99 },
@@ -185,14 +186,6 @@ test('checks fixed lengths, stack limits, hotbar items, and exclusive gear owner
     'Invalid hotbar item at slot 0.',
   ]);
 });
-
-function randomForSeed(seed: number) {
-  let value = seed;
-  return (bound: number) => {
-    value = (Math.imul(value, 1664525) + 1013904223) >>> 0;
-    return Math.floor(value / 0x1_0000_0000 * bound);
-  };
-}
 
 const operations = ['add', 'remove', 'addGear', 'removeGear', 'move'] as const;
 type Operation = typeof operations[number];
