@@ -65,6 +65,8 @@ All numbers are provisional and will be balanced through playtesting. Item IDs u
 
 The split is 9 `mainHand`, 6 `body`, and 5 `accessory`. M3 finalizes sources. Starter gear keeps price 0.
 
+D38 assigns the six reward items prices as `gear`. They can be sold for `floor(price / 2)`.
+
 ### mainHand (9)
 
 | Item ID suffix | Template | Upgrade tier | Stats | Source | Price |
@@ -88,9 +90,9 @@ All templates are `null`.
 | `traveler_tunic` | copper | guard 2, maxHp 10 | Starter | 0 |
 | `woven_jerkin` | copper | guard 3, maxHp 15 | Shop | 60 |
 | `copper_ring_coat` | copper | guard 5, maxHp 10 | Shop | 120 |
-| `mossweave_robe` | iron | guard 2, maxHp 10, maxMana 15 | Quest reward | — |
-| `iron_guard_mail` | iron | guard 8, maxHp 20 | Quest reward | — |
-| `starlite_mantle` | starlite | guard 10, maxHp 30, maxMana 10 | `q_restore` reward | — |
+| `mossweave_robe` | iron | guard 2, maxHp 10, maxMana 15 | Quest reward | 180 |
+| `iron_guard_mail` | iron | guard 8, maxHp 20 | Quest reward | 260 |
+| `starlite_mantle` | starlite | guard 10, maxHp 30, maxMana 10 | `q_restore` reward | 450 |
 
 ### accessory (5)
 
@@ -99,10 +101,10 @@ All templates are `null`.
 | Item ID suffix | Upgrade tier | Stats | Source | Price |
 | --- | --- | --- | --- | ---: |
 | `copper_band` | copper | power 1, guard 1 | Shop | 50 |
-| `feather_charm` | copper | maxHp 15 | `q_pet` reward | — |
-| `silverleaf_pendant` | iron | maxHp 10, maxMana 10 | `q_farm` reward | — |
+| `feather_charm` | copper | maxHp 15 | `q_pet` reward | 80 |
+| `silverleaf_pendant` | iron | maxHp 10, maxMana 10 | `q_farm` reward | 160 |
 | `moonpetal_brooch` | iron | maxMana 20 | Shop | 150 |
-| `star_compass` | starlite | power 2, guard 2, maxHp 10, maxMana 10 | Chapter reward | — |
+| `star_compass` | starlite | power 2, guard 2, maxHp 10, maxMana 10 | Chapter reward | 450 |
 
 ## 5. Upgrades
 
