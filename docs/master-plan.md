@@ -387,7 +387,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [x] M1-02: New Game state, mode, 3 template, starter gear.
 - [x] M1-03: Input desktop/touch, movement/collision/camera.
 - [x] M1-04: 4 map transition markers, map prototype chạy được.
-- [ ] M1-05: Test T01/T02, mobile control smoke; build local.
+- [x] M1-05: Test T01/T02, mobile control smoke; build local.
 
 ### M2 — Progression / economy vertical slice
 - [ ] M2-01: Player stats, level/XP, gain from non-combat activities.
