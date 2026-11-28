@@ -15,6 +15,7 @@ function readFixture(caseName: string): Record<string, unknown> {
 type Diagnostic = [ValidationError['code'], string, string];
 
 const invalidCases: Record<string, Diagnostic[]> = {
+  'recipe-string-requirement': [['SCHEMA', 'recipes.json', '$[0].requirement']],
   'progression-wrong-length': [['SCHEMA', 'progression.json', '$.xpToNext']],
   'progression-zero-value': [['SCHEMA', 'progression.json', '$.xpToNext[0]']],
   'progression-unknown-source': [['SCHEMA', 'progression.json', '$.xpSources.encounter']],

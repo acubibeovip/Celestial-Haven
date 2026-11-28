@@ -29,6 +29,7 @@ export const sessionErrorKeys = {
   WRONG_TEMPLATE: 'ui.session_error.wrong_template',
   SLOT_EMPTY: 'ui.session_error.slot_empty',
   BAG_FULL: 'ui.session_error.bag_full',
+  REQUIREMENT_UNSUPPORTED: 'ui.session_error.requirement_unsupported',
   UNKNOWN_RECIPE: 'ui.session_error.unknown_recipe',
   NO_STATION_ON_MAP: 'ui.session_error.no_station_on_map',
   UNKNOWN_NODE: 'ui.session_error.unknown_node',

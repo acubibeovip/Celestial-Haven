@@ -6,7 +6,7 @@ Status: Proposed
 
 The six processed materials, two consumables, Star Lantern, and recipes R01–R15 follow [ADR-017](ADR-017-m2-content.md). Item and recipe IDs use the established prefixes. Each recipe uses `forge` or `workbench` and names its primary output in its ID. Each gear output has quantity 1. Processed materials and both consumables use stackMax 99. Star Lantern has price 0 and stackMax 1.
 
-Every v0.1 recipe has `requirement: null`. Gating Star Lantern behind the shrine quest remains open for M4.
+The v0.1 schema only accepts `requirement: null`. The domain rejects any other value with `REQUIREMENT_UNSUPPORTED`. M4 defines recipe requirements and decides whether to gate Star Lantern behind the shrine quest. Schema widening and the corresponding domain checks must land in the same PR.
 
 ## D59 First-time record
 

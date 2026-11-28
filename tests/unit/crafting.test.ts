@@ -95,6 +95,15 @@ test('multi-input craft removes quantities across several stacks from the last m
   ]);
 });
 
+test('craft rejects unsupported requirements without consuming inputs or awarding XP', () => {
+  const initial = player(stack('item_oak_log', 2));
+  const before = structuredClone(initial);
+
+  expect(craft(initial, { ...plank, requirement: 'shrine_quest' }, catalog))
+    .toEqual({ ok: false, error: 'REQUIREMENT_UNSUPPORTED' });
+  expect(initial).toEqual(before);
+});
+
 test('an invalid XP award rolls back an otherwise successful bag change', () => {
   const initial = player(stack('item_oak_log', 2));
   const before = structuredClone(initial);

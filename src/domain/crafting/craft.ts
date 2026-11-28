@@ -16,7 +16,7 @@ export interface RecipeInfo {
   readonly requirement: string | null;
 }
 
-export type CraftError = BagError | XpError;
+export type CraftError = BagError | XpError | 'REQUIREMENT_UNSUPPORTED';
 
 interface CraftResult {
   state: PlayerState;
@@ -29,6 +29,8 @@ interface CraftResult {
 export function craft(
   state: Readonly<PlayerState>, recipe: RecipeInfo, catalog: ItemCatalog & { progression: Progression },
 ): Result<CraftResult, CraftError> {
+  if (recipe.requirement !== null) return err('REQUIREMENT_UNSUPPORTED');
+
   const add: ItemStack[] = [];
   const addGear: ItemInfo[] = [];
   for (const output of recipe.outputs) {
