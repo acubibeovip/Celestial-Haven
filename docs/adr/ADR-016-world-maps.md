@@ -1,6 +1,6 @@
 # ADR-016 Blockout maps and world checkpoints
 
-Status: Proposed
+Status: Accepted (2026-11-28, reviewed in PR #13)
 
 ## D28 Generated blockouts
 

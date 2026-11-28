@@ -386,7 +386,7 @@ Không đăng nhập, upload hoặc phát hành thay người dùng trong tài l
 - [x] M1-01: Boot/title/settings, 10 card và hero preview.
 - [x] M1-02: New Game state, mode, 3 template, starter gear.
 - [x] M1-03: Input desktop/touch, movement/collision/camera.
-- [ ] M1-04: 4 map transition markers, map prototype chạy được.
+- [x] M1-04: 4 map transition markers, map prototype chạy được.
 - [ ] M1-05: Test T01/T02, mobile control smoke; build local.
 
 ### M2 — Progression / economy vertical slice
