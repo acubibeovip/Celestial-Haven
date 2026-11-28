@@ -1,7 +1,7 @@
 [
   {
     "id": "item_test_a",
-    "kind": "fixture",
+    "kind": "consumable",
     "stackMax": 10,
     "icon": "test-a",
     "price": 1,
@@ -9,15 +9,15 @@
   },
   {
     "id": "item_test_b",
-    "kind": "fixture",
+    "kind": "quest",
     "stackMax": 10,
     "icon": "test-b",
-    "price": 1,
+    "price": 0,
     "nameKey": "item.fixture_1.name"
   },
   {
     "id": "item_test_c",
-    "kind": "fixture",
+    "kind": "material",
     "stackMax": 10,
     "icon": "test-c",
     "price": 1,
@@ -25,7 +25,7 @@
   },
   {
     "id": "item_test_d",
-    "kind": "fixture",
+    "kind": "material",
     "stackMax": 10,
     "icon": "test-d",
     "price": 1,

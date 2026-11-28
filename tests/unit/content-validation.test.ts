@@ -18,6 +18,7 @@ const invalidCases: Record<string, Diagnostic[]> = {
   'progression-wrong-length': [['SCHEMA', 'progression.json', '$.xpToNext']],
   'progression-zero-value': [['SCHEMA', 'progression.json', '$.xpToNext[0]']],
   'progression-unknown-source': [['SCHEMA', 'progression.json', '$.xpSources.encounter']],
+  'quest-item-price': [['SCHEMA', 'items.json', '$[0].price']],
   schema: [['SCHEMA', 'elements.json', '$']],
   'missing-string-key': [['MISSING_REF', 'heroes.json', '$[0].nameKey']],
   'bad-string-key': [['SCHEMA', 'strings.en.json', '$["hero.Test.name"]']],

@@ -15,12 +15,15 @@ export const gearSchema = z.strictObject({
 export const itemSchema = z.strictObject({
   id: z.string(),
   nameKey: text,
-  kind: text,
+  kind: z.enum(['material', 'gear', 'consumable', 'quest']),
   stackMax: z.int().min(1).max(99),
   icon: text,
   price: count,
   gear: gearSchema.optional(),
 }).superRefine((item, context) => {
+  if (item.kind === 'quest' && item.price !== 0) {
+    context.addIssue({ code: 'custom', path: ['price'], message: 'Quest items have price 0.' });
+  }
   if (item.kind === 'gear') {
     if (!item.gear) context.addIssue({ code: 'custom', path: ['gear'], message: 'Gear items require gear data.' });
     if (item.stackMax !== 1) context.addIssue({ code: 'custom', path: ['stackMax'], message: 'Gear items have stackMax 1.' });
