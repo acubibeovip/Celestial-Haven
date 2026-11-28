@@ -1,30 +1,10 @@
-import { expect, test, type FrameLocator, type Page } from '@playwright/test';
+import { expect, test, type FrameLocator } from '@playwright/test';
+import { openMenu } from './openMenu';
 
 const roster = [
   'Storm Monk', 'Aurora Priestess', 'Frostfox Sorceress', 'Earthshaker Sentinel', 'Galeblade Wanderer',
   'Eclipse Reaper', 'Tidebound Dragon General', 'Phoenix Blade Dancer', 'Starfall Archer', 'Spirit Beast Warden',
 ];
-
-async function openMenu(page: Page, baseURL: string | undefined) {
-  const errors: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
-  page.on('pageerror', (error) => errors.push(error.message));
-
-  const wrapper = new URL('menu-test.html', baseURL);
-  await page.route(wrapper.href, (route) => route.fulfill({
-    contentType: 'text/html',
-    body: `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1">
-      <style>body{margin:0}iframe{display:block;width:100vw;height:100dvh;border:0}</style>
-      <iframe title="Celestial Haven" src="./index.html"></iframe>`,
-  }));
-  await page.goto(wrapper.href);
-
-  const frame = page.frameLocator('iframe');
-  await expect(frame.getByRole('heading', { name: 'Celestial Haven' })).toBeVisible();
-  return { frame, errors };
-}
 
 async function expectTouchTargets(frame: FrameLocator) {
   const sizes = await frame.locator('button, input[type="radio"]').evaluateAll((targets) =>
