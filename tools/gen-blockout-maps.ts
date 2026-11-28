@@ -6,7 +6,7 @@ const layouts = new URL('./blockouts/', import.meta.url);
 const output = new URL('../src/content/maps/', import.meta.url);
 const terrain = {
   '.': [1, 0, 0], ':': [2, 0, 0], '#': [1, 3, 1], B: [2, 4, 1], '~': [1, 5, 1],
-  S: [2, 0, 0], E: [2, 6, 0],
+  S: [2, 0, 0], E: [2, 6, 0], R: [1, 0, 0], D: [2, 0, 0],
 } as const;
 
 function generate(source: string, filename: string): string {
@@ -17,7 +17,7 @@ function generate(source: string, filename: string): string {
   const height = rows.length;
   if (width === 0 || rows.some((row) => row.length !== width)) throw new Error(`${filename}: expected a rectangular layout.`);
 
-  const points: Record<'S' | 'E', { x: number; y: number }[]> = { S: [], E: [] };
+  const points: Record<'S' | 'E' | 'R' | 'D', { x: number; y: number }[]> = { S: [], E: [], R: [], D: [] };
   const ground: number[] = [];
   const decor: number[] = [];
   const collision: number[] = [];
@@ -27,25 +27,27 @@ function generate(source: string, filename: string): string {
     ground.push(base);
     decor.push(feature);
     collision.push(solid);
-    if (symbol === 'S' || symbol === 'E') points[symbol].push({ x, y });
+    if (symbol === 'S' || symbol === 'E' || symbol === 'R' || symbol === 'D') points[symbol].push({ x, y });
   }));
 
   const objects = records.split(/\r?\n/).filter((line) => line.trim() && !line.startsWith(';')).map((record, index) => {
     const [type, name, targetMap, targetSpawn, ...extra] = record.trim().split(/\s+/);
-    if (!type || !name || extra.length || (type === 'spawn' ? targetMap !== undefined : type !== 'exit' || !targetMap || !targetSpawn)) {
+    const symbol = type === 'spawn' ? 'S' : type === 'exit' ? 'E' : type === 'resource' ? 'R' : type === 'bed' ? 'D' : undefined;
+    if (!type || !symbol || !name || extra.length || (type === 'exit' ? !targetMap || !targetSpawn : targetMap !== undefined)) {
       throw new Error(`${filename}: invalid marker record "${record}".`);
     }
-    const point = points[type === 'spawn' ? 'S' : 'E'].shift();
+    const point = points[symbol].shift();
     if (!point) throw new Error(`${filename}: marker record has no matching layout symbol.`);
     const property = (key: string, value: string) => ({ name: key, type: 'string', value });
     const properties = [property('type', type)];
+    if (type === 'resource') properties.push(property('node', name));
     if (targetMap && targetSpawn) properties.push(property('targetMap', targetMap), property('targetSpawn', targetSpawn));
     return {
       id: index + 1, name, point: true, x: point.x * TILE_SIZE + 16, y: point.y * TILE_SIZE + 16,
       width: 0, height: 0, properties,
     };
   });
-  if (points.S.length || points.E.length) throw new Error(`${filename}: each marker symbol needs a table record.`);
+  if (Object.values(points).some((list) => list.length)) throw new Error(`${filename}: each marker symbol needs a table record.`);
 
   const layer = (id: number, name: string, data: number[]) => ({
     id, name, type: 'tilelayer', width, height, x: 0, y: 0, opacity: 1,

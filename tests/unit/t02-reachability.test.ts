@@ -65,15 +65,21 @@ function assertClear(feet: Position, grid: CollisionGrid, route: string): void {
   }
 }
 
-test('T02 walks every spawn-to-exit BFS route with the D23 feet box', () => {
+test('T02 walks every spawn-to-exit and spawn-to-interactable BFS route with the D23 feet box', () => {
   let routes = 0;
   let maxSteps = 0;
   for (const [mapId, map] of maps) {
     const size = map.collision.tileSize;
     for (const [spawnName, spawn] of map.spawns) {
-      for (const exit of map.exits.values()) {
-        const route = `${mapId}: ${spawnName} -> ${exit.name}`;
-        const end = { x: exit.tileX, y: exit.tileY };
+      const targets = [
+        ...map.exits.values(),
+        ...map.interactables.map((marker) => ({
+          ...marker, name: marker.type === 'resource' ? marker.nodeId : 'bed',
+        })),
+      ];
+      for (const target of targets) {
+        const route = `${mapId}: ${spawnName} -> ${target.name}`;
+        const end = { x: target.tileX, y: target.tileY };
         const path = shortestPath(map.collision, tileOf(spawn, size), end);
         expect(path.length, route).toBeGreaterThan(0);
         let feet: Position = spawn;
@@ -102,7 +108,7 @@ test('T02 walks every spawn-to-exit BFS route with the D23 feet box', () => {
   }
   expect(maps.size).toBe(5);
   expect(routes).toBeGreaterThan(0);
-  console.log(`T02: ${maps.size} maps, ${routes} spawn-to-exit routes, max ${maxSteps} fixed steps.`);
+  console.log(`T02: ${maps.size} maps, ${routes} spawn-to-marker routes, max ${maxSteps} fixed steps.`);
 });
 
 test('T02 EnterExit commits every clear arrival at least three tiles from every exit', () => {

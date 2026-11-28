@@ -24,14 +24,14 @@ if (import.meta.env.DEV && new URLSearchParams(location.search).has('proto')) {
 function startGame(root: HTMLElement): void {
   const files = readBundledContent();
   const registry = createContentRegistry(files);
-  const maps = loadWorldMaps(readBundledMaps());
+  const maps = registry.ok ? loadWorldMaps(readBundledMaps(), registry.value.resourceNodes) : registry;
   if (!registry.ok || !maps.ok) {
     const strings = files['strings.en.json'];
     const title = typeof strings === 'object' && strings !== null && 'ui.content_error' in strings
       ? strings['ui.content_error']
       : undefined;
     showContentError(root, typeof title === 'string' && title.trim() ? title : document.title, [
-      ...(registry.ok ? [] : registry.error), ...(maps.ok ? [] : maps.error),
+      ...(registry.ok ? [] : registry.error), ...(!registry.ok || maps.ok ? [] : maps.error),
     ]);
     return;
   }
@@ -90,6 +90,7 @@ function startGame(root: HTMLElement): void {
       reducedMotion: root.dataset.reducedMotion === 'true',
       canCapture: () => root.hidden && host.classList.contains('world-active')
         && !document.activeElement?.closest('#app, dialog, [role="dialog"], [role="menu"]'),
+      content,
       nameMap: (mapId) => content.text(mapNameKey(mapId)),
       onInvalidState: blockWorld,
     }), true);

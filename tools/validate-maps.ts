@@ -1,11 +1,13 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { indexMapSpawns, validateMap } from '../src/content/validateMap.ts';
+import { indexMapSpawns, requiredMapIds, validateInteractionPlacements, validateMap } from '../src/content/validateMap.ts';
+import { resourceNodeSchema } from '../src/content/schema/resourceNode.ts';
 import type { ValidationError } from '../src/content/validate.ts';
 
 async function run(): Promise<number> {
   const { values: { dir } } = parseArgs({ options: { dir: { type: 'string', default: 'src/content/maps' } } });
+  const production = resolve(dir) === resolve('src/content/maps');
   const maps = new Map<string, unknown>();
   const errors: ValidationError[] = [];
   let entries;
@@ -13,6 +15,7 @@ async function run(): Promise<number> {
     entries = await readdir(dir, { withFileTypes: true });
   } catch (error) {
     if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;
+    if (production) throw error;
     console.log(`Maps: 0. Directory "${dir}" is absent. Maps are optional at this milestone.`);
     return 0;
   }
@@ -34,10 +37,16 @@ async function run(): Promise<number> {
     }
   }
 
+  const resourceFile = new URL('../src/content/data/resourceNodes.json', import.meta.url);
+  const rows = resourceNodeSchema.array().parse(JSON.parse(await readFile(resourceFile, 'utf8')));
+  const nodes = new Map(rows.map((node) => [node.id, node]));
+  if (production || requiredMapIds.some((id) => maps.has(id))) {
+    errors.push(...validateInteractionPlacements(maps, nodes));
+  }
   const knownMaps = indexMapSpawns(maps);
   let valid = 0;
   for (const [id, data] of maps) {
-    const result = validateMap(id, data, knownMaps);
+    const result = validateMap(id, data, knownMaps, nodes);
     if (result.ok) {
       const { width, height, spawns, exits } = result.value;
       console.log(`${id}: ${width} × ${height}, ${spawns} spawns, ${exits} exits.`);

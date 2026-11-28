@@ -8,17 +8,74 @@
 #game.world-active:focus { outline: none; }
 #game.world-active canvas { image-rendering: pixelated; }
 
-.world-map-name {
+.world-panel {
   position: absolute;
   z-index: 6;
+  inset: 0;
+  pointer-events: none;
+  color: #f5ebd8;
+}
+
+.world-hud {
+  position: absolute;
   top: max(12px, env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 16px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+}
+
+.world-hud p, .world-prompt, .world-toast:not(:empty) {
+  padding: 6px 10px;
   border: 1px solid #c9a96e;
   border-radius: 8px;
-  background: #1d1b2de8;
-  color: #f5ebd8;
-  box-shadow: 0 4px 15px #11132260;
-  white-space: nowrap;
+  background: #1d1b2df5;
 }
+
+.world-prompt {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  max-width: calc(100% - 12px);
+}
+
+.world-toast {
+  position: absolute;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: min(55%, 330px);
+  text-align: center;
+}
+
+.world-interact {
+  display: none;
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  min-width: 56px;
+  min-height: 56px;
+  pointer-events: auto;
+  max-width: 30%;
+}
+
+@media (any-pointer: coarse) {
+  .world-interact:not([hidden]) { display: block; }
+}
+
+.world-sleep {
+  pointer-events: auto;
+  background: #1d1b2d;
+  color: inherit;
+  border: 1px solid #c9a96e;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.world-sleep::backdrop { background: #111322a0; }
+.world-sleep button { margin: 12px 8px 0 0; }
+
+#game[data-reduced-motion='true'] .world-panel .button { transition: none; }

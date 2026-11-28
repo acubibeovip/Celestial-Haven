@@ -27,7 +27,7 @@ function mapsWithStartingNodes(nodeIds: readonly string[]) {
   const checkpoints = new Map(maps);
   const startingMap = checkpoints.get(START_MAP_ID);
   if (!startingMap) throw new Error('Expected the starting map.');
-  checkpoints.set(START_MAP_ID, { ...startingMap, resourceNodeIds: new Set(nodeIds) });
+  checkpoints.set(START_MAP_ID, { ...startingMap, resourceNodeIds: new Set(nodeIds), hasBed: true });
   return checkpoints;
 }
 
@@ -199,4 +199,19 @@ test.each([
   expect(session.dispatch(gather(oak))).toEqual({ ok: false, error: 'NODE_NOT_ON_MAP' });
   expect(session.snapshot()).toBe(before);
   expect(listener).not.toHaveBeenCalled();
+});
+
+test('EndDay returns NO_BED_ON_MAP outside Farm without changing snapshot or emitting', () => {
+  const session = start(catalog, maps);
+  const before = session.snapshot();
+  const listener = vi.fn();
+  session.subscribe(listener);
+
+  expect(session.dispatch(endDay)).toEqual({ ok: false, error: 'NO_BED_ON_MAP' });
+  expect(session.snapshot()).toBe(before);
+  expect(listener).not.toHaveBeenCalled();
+
+  valueOf(session.dispatch({ type: 'EnterExit', exitName: 'to_farm' }));
+  valueOf(session.dispatch(endDay));
+  expect(playing(session).world.day).toBe(2);
 });

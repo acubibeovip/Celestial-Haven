@@ -89,6 +89,7 @@ export class LocalSession implements GameSession {
       }
       case 'EndDay': {
         if (this.state.phase !== 'playing') return err('NOT_PLAYING');
+        if (!this.maps.get(this.state.player.location.mapId)?.hasBed) return err('NO_BED_ON_MAP');
         const world = { ...this.state.world, day: this.state.world.day + 1 };
         this.state = freezeTree({ ...this.state, world });
         this.emit(Object.freeze({ type: 'DayEnded', day: world.day }));

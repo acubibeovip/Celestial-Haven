@@ -54,6 +54,13 @@ jobs:
           name: world-map-overviews
           path: test-results/prototype/**/world-map-*.png
           if-no-files-found: error
+      - name: Upload desktop and mobile world interaction screenshots
+        if: ${{ github.event_name == 'pull_request' && steps.e2e.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: world-interaction-screenshots
+          path: test-results/**/world-interaction-*.png
+          if-no-files-found: error
       - name: Upload Playwright report
         if: ${{ failure() && steps.e2e.outcome == 'failure' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

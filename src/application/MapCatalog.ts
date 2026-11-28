@@ -13,6 +13,7 @@ export type MapExit = Readonly<{
 export interface CheckpointMap {
   spawns: ReadonlyMap<string, Readonly<PlayerLocation>>;
   exits: ReadonlyMap<string, MapExit>;
+  hasBed: boolean;
   resourceNodeIds: ReadonlySet<string>;
 }
 

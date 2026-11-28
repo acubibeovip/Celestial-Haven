@@ -1,7 +1,9 @@
 import { err, ok, type Result } from '../shared/result.ts';
 import { mapSchema, TILE_SIZE, type MapMarker } from './schema/map.ts';
+import type { ResourceNodeDef } from './schema/resourceNode.ts';
 import type { ValidationError } from './validate.ts';
 
+export type KnownNodes = ReadonlyMap<string, Pick<ResourceNodeDef, 'kind'>>;
 export type KnownMaps = ReadonlyMap<string, ReadonlySet<string>>;
 export type MapSummary = { mapId: string; width: number; height: number; spawns: number; exits: number };
 
@@ -62,7 +64,7 @@ function reachableTiles(start: number, width: number, height: number, collision:
   return visited;
 }
 
-export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps): Result<MapSummary, ValidationError[]> {
+export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps, nodes: KnownNodes = new Map()): Result<MapSummary, ValidationError[]> {
   const file = `${mapId}.json`;
   const errors: ValidationError[] = [];
   const issue = (path: string, message: string, code: ValidationError['code'] = 'SCHEMA') => {
@@ -104,6 +106,10 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
   const seenExits = new Set<string>();
   const exitTiles = markers.filter((marker) => property(marker, 'type', '').value === 'exit')
     .map(({ x, y }) => ({ x: Math.floor(x / TILE_SIZE), y: Math.floor(y / TILE_SIZE) }));
+  const reservedTiles = new Set(markers.filter((marker) => {
+    const type = property(marker, 'type', '').value;
+    return type === 'spawn' || type === 'exit';
+  }).map(({ x, y }) => `${Math.floor(x / TILE_SIZE)},${Math.floor(y / TILE_SIZE)}`));
   const walkableMarkers: { path: string; tile: number }[] = [];
   const objectsPath = '$.layers[3].objects';
   let defaultTile: number | undefined;
@@ -138,8 +144,23 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
           issue(spawn.path, `Unknown spawn "${spawn.value}" in "${map.value}".`, 'MISSING_REF');
         }
       }
+    } else if (type.value === 'resource') {
+      const node = property(marker, 'node', path);
+      if (!node.value || !/^res_[a-z0-9_]+$/.test(node.value)) {
+        issue(node.path, 'A resource marker requires a res_ node ID.');
+      } else {
+        const definition = nodes.get(node.value);
+        if (!definition) issue(node.path, `Unknown resource node "${node.value}".`, 'MISSING_REF');
+        else {
+          const expectedMap = definition.kind === 'gather' ? 'map_whisperwood' : 'map_crystal_hollow';
+          if (mapId !== expectedMap) issue(path, `Resource node "${node.value}" belongs on "${expectedMap}".`, 'MARKER_WRONG_MAP');
+        }
+      }
+    } else if (type.value === 'bed') {
+      if (names.size !== 1) issue(`${path}.properties`, 'A bed has no custom properties beyond its type.');
+      if (mapId !== 'map_farm') issue(path, 'The bed belongs on map_farm.', 'MARKER_WRONG_MAP');
     } else {
-      issue(type.path, 'Marker type must be spawn or exit.');
+      issue(type.path, 'Marker type must be spawn, exit, resource, or bed.');
       return;
     }
 
@@ -155,6 +176,9 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
       } else if (exitTiles.some((tile) => Math.max(Math.abs(tile.x - x), Math.abs(tile.y - y)) < 3)) {
         issue(path, 'A spawn must be at least three tiles from every exit, including diagonally.', 'SPAWN_NEAR_EXIT');
       }
+    }
+    if ((type.value === 'resource' || type.value === 'bed') && reservedTiles.has(`${x},${y}`)) {
+      issue(path, 'An interactable may not share a tile with a spawn or exit.', 'MARKER_ON_CHECKPOINT');
     }
     if (collision.length !== cellCount) return;
     const tile = y * width + x;
@@ -174,4 +198,31 @@ export function validateMap(mapId: string, json: unknown, knownMaps: KnownMaps):
     }
   }
   return errors.length ? err(errors) : ok({ mapId, width, height, spawns: localSpawns.size, exits });
+}
+
+export function validateInteractionPlacements(maps: ReadonlyMap<string, unknown>, nodes: KnownNodes): ValidationError[] {
+  const errors: ValidationError[] = [];
+  const seen = new Set<string>();
+  let hasBed = false;
+  for (const [mapId, json] of maps) {
+    const parsed = mapSchema.safeParse(json);
+    if (!parsed.success) continue;
+    for (const [index, marker] of parsed.data.layers[3].objects.entries()) {
+      const path = `$.layers[3].objects[${index}]`;
+      const type = property(marker, 'type', path).value;
+      const node = property(marker, 'node', path).value;
+      const key = type === 'bed' ? 'bed' : type === 'resource' ? node : undefined;
+      if (!key) continue;
+      if (seen.has(key)) {
+        errors.push({ file: `${mapId}.json`, path, code: 'DUPLICATE_PLACEMENT', message: `Duplicate placement for "${key}".` });
+      }
+      seen.add(key);
+      if (type === 'bed' && mapId === 'map_farm') hasBed = true;
+    }
+  }
+  for (const id of nodes.keys()) {
+    if (!seen.has(id)) errors.push({ file: 'resourceNodes.json', path: '$', code: 'MISSING_PLACEMENT', message: `No map marker for "${id}".` });
+  }
+  if (!hasBed) errors.push({ file: 'map_farm.json', path: '$.layers[3].objects', code: 'MISSING_PLACEMENT', message: 'Farm requires one bed marker.' });
+  return errors;
 }

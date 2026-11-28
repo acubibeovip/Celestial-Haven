@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
-import type { GameSession } from '../../application/GameSession';
+import { sessionErrorKeys, type ContentRegistry } from '../../application/ContentRegistry';
+import { formatWorldText, resourcePrompt } from '../../application/worldFeedback';
+import { isNodeAvailable } from '../../domain/gathering/harvest';
+import { pickInteraction } from '../../domain/world/pickInteraction';
+import { mountWorldPanel } from '../../ui/worldPanel';
+import type { GameSession, SessionEvent } from '../../application/GameSession';
 import type { PlayerLocation } from '../../domain/player/types';
 import { overlapsTile, stepMovement, type Position } from '../../domain/world/movement';
 import type { WorldMap } from '../../infrastructure/maps/loadWorldMaps';
@@ -14,6 +19,7 @@ interface WorldOptions {
   canCapture: () => boolean;
   reducedMotion: boolean;
   hero: { color: string; initials: string };
+  content: ContentRegistry;
   nameMap: (mapId: string) => string;
   onInvalidState: () => void;
 }
@@ -27,6 +33,9 @@ export class World extends Phaser.Scene {
   private feet: Position = { x: 0, y: 0 };
   private timing = createFixedStepState();
   private activeExits = new Set<string>();
+  private bed: Phaser.GameObjects.Container | undefined;
+  private panel?: ReturnType<typeof mountWorldPanel>;
+  private readonly resources = new Map<string, Phaser.GameObjects.Shape>();
   private transitioning = false;
 
   constructor(options: WorldOptions) {
@@ -35,7 +44,7 @@ export class World extends Phaser.Scene {
   }
 
   create(): void {
-    const { host, session, hero, canCapture } = this.options;
+    const { host, session, hero } = this.options;
     const state = session.snapshot();
     if (state.phase !== 'playing' || !this.options.maps.has(state.player.location.mapId)) {
       this.options.onInvalidState();
@@ -52,25 +61,32 @@ export class World extends Phaser.Scene {
     canvas.dataset.heroElementColor = hero.color;
     this.marker = this.add.container(0, 0, [chip, initials]).setDepth(1);
 
-    const name = document.createElement('p');
-    name.className = 'world-map-name';
-    name.dataset.testid = 'map-name';
-    name.setAttribute('role', 'status');
-    host.append(name);
-    const controls = new InputAdapter(host, () => !this.transitioning && canCapture());
+    const panel = mountWorldPanel(host, this.options.content.text, () => this.interact());
+    this.panel = panel;
+    host.dataset.reducedMotion = String(this.options.reducedMotion);
+    const controls = new InputAdapter(host, () => this.canInteract());
     this.controls = controls;
-
+    const key = (event: KeyboardEvent) => {
+      if (event.code !== 'KeyE' || event.repeat || !this.canInteract()) return;
+      event.preventDefault();
+      this.interact();
+    };
+    window.addEventListener('keydown', key);
     const unsubscribe = session.subscribe((event) => {
-      if (event.type !== 'MapChanged') return;
       const current = session.snapshot();
-      if (current.phase === 'playing') this.transition(current.player.location, name);
+      if (current.phase !== 'playing') return;
+      if (event.type === 'MapChanged') this.fade(() => this.place(current.player.location, panel.mapName));
+      else if (event.type === 'ResourceGathered' || event.type === 'DayEnded') this.feedback(event);
     });
     const resetTiming = () => { this.timing = { accumulatorMs: 0, hidden: true }; };
     document.addEventListener('visibilitychange', resetTiming);
     this.events.once('shutdown', () => {
       unsubscribe();
       controls.destroy();
-      name.remove();
+      panel.destroy();
+      this.resources.clear();
+      window.removeEventListener('keydown', key);
+      delete host.dataset.reducedMotion;
       delete canvas.dataset.heroInitials;
       delete canvas.dataset.heroElementColor;
       host.removeAttribute('aria-busy');
@@ -78,7 +94,7 @@ export class World extends Phaser.Scene {
       this.cameras.main.resetFX();
     });
 
-    this.place(state.player.location, name);
+    this.place(state.player.location, panel.mapName);
   }
 
   update(_time: number, delta: number): void {
@@ -96,6 +112,7 @@ export class World extends Phaser.Scene {
       this.activeExits = touching;
       if (entered && this.options.session.dispatch({ type: 'EnterExit', exitName: entered }).ok) break;
     }
+    this.refreshPrompt();
   }
 
   private exitsAtFeet(): Set<string> {
@@ -120,6 +137,28 @@ export class World extends Phaser.Scene {
     if (!this.textures.exists(texture)) this.textures.addCanvas(texture, paintBlockout(location.mapId, map.data));
     this.backdrop = this.add.image(0, 0, texture).setOrigin(0);
     this.map = map;
+    for (const shape of this.resources.values()) shape.destroy();
+    this.resources.clear();
+    this.bed?.destroy();
+    this.bed = undefined;
+    for (const marker of map.interactables) {
+      const x = (marker.tileX + 0.5) * map.collision.tileSize;
+      const y = (marker.tileY + 0.5) * map.collision.tileSize;
+      if (marker.type === 'bed') {
+        const frame = this.add.rectangle(0, 0, 18, 24, 0x945e57).setStrokeStyle(2, 0x232332);
+        const pillow = this.add.rectangle(0, -7, 12, 6, 0xf5ebd8);
+        const blanket = this.add.rectangle(0, 3, 14, 10, 0x718bc1);
+        this.bed = this.add.container(x, y, [frame, pillow, blanket]);
+        continue;
+      }
+      const node = this.options.content.resourceNodes.get(marker.nodeId);
+      if (!node) continue;
+      const shape = node.kind === 'gather'
+        ? this.add.circle(x, y, 11, 0x64b47a)
+        : this.add.rectangle(x, y, 16, 16, 0x9daab7).setAngle(45);
+      shape.setStrokeStyle(2, 0x232332);
+      this.resources.set(marker.nodeId, shape);
+    }
     this.feet = { x: location.x, y: location.y };
     this.marker?.setPosition(this.feet.x, this.feet.y);
     this.activeExits = this.exitsAtFeet();
@@ -129,19 +168,21 @@ export class World extends Phaser.Scene {
     if (this.marker) this.cameras.main.startFollow(this.marker, true);
 
     label.textContent = this.options.nameMap(location.mapId);
+    this.refreshWorld();
   }
 
-  private transition(location: PlayerLocation, label: HTMLElement): void {
+  private fade(atMidpoint: () => void): void {
     if (this.options.reducedMotion) {
-      this.place(location, label);
+      atMidpoint();
       return;
     }
 
     this.transitioning = true;
+    this.panel?.showPrompt(undefined);
     this.options.host.setAttribute('aria-busy', 'true');
     const camera = this.cameras.main;
     camera.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-      this.place(location, label);
+      atMidpoint();
       camera.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
         this.transitioning = false;
         this.options.host.removeAttribute('aria-busy');
@@ -149,5 +190,83 @@ export class World extends Phaser.Scene {
       camera.fadeIn(100);
     });
     camera.fadeOut(100);
+  }
+
+  private canInteract(): boolean {
+    return !this.transitioning && !this.panel?.isDialogOpen() && this.options.canCapture();
+  }
+
+  private itemName(itemId: string): string {
+    const { content } = this.options;
+    const item = content.items.get(itemId);
+    return item ? content.text(item.nameKey) : itemId;
+  }
+
+  private interact(): void {
+    if (!this.map || !this.canInteract()) return;
+    const marker = pickInteraction(this.feet, this.map.interactables);
+    if (marker?.type === 'resource') {
+      const result = this.options.session.dispatch({ type: 'Gather', nodeId: marker.nodeId });
+      if (!result.ok) this.panel?.announce(this.options.content.text(sessionErrorKeys[result.error]));
+    } else if (marker?.type === 'bed') {
+      this.panel?.confirmSleep(() => {
+        const result = this.options.session.dispatch({ type: 'EndDay' });
+        if (!result.ok) this.panel?.announce(this.options.content.text(sessionErrorKeys[result.error]));
+      });
+    }
+  }
+
+  private refreshWorld(): void {
+    const { content, session } = this.options;
+    const state = session.snapshot();
+    if (state.phase !== 'playing' || !this.panel) return;
+    this.panel.day.textContent = formatWorldText(content.text, 'ui.world.day', { day: state.world.day });
+    const { level, xp } = state.player;
+    this.panel.xp.textContent = formatWorldText(
+      content.text, level === content.progression.levelCap ? 'ui.world.xp_max' : 'ui.world.xp',
+      { level, xp, next: content.progression.xpToNext[level - 1] ?? 0 },
+    );
+    for (const [id, shape] of this.resources) {
+      const node = content.resourceNodes.get(id);
+      if (node) shape.setAlpha(isNodeAvailable(state.world, node) ? 1 : 0.4);
+    }
+    this.refreshPrompt();
+  }
+
+  private refreshPrompt(): void {
+    const { session, content } = this.options;
+    const state = session.snapshot();
+    const marker = this.map && !this.transitioning ? pickInteraction(this.feet, this.map.interactables) : undefined;
+    if (state.phase !== 'playing' || !marker) {
+      this.panel?.showPrompt(undefined);
+      return;
+    }
+
+    const node = marker.type === 'resource' ? content.resourceNodes.get(marker.nodeId) : undefined;
+    const message = node ? resourcePrompt(state.world, node, this.itemName(node.itemId), content.text) : content.text('ui.world.sleep');
+    const canvas = this.game.canvas;
+    const camera = this.cameras.main;
+    this.panel?.showPrompt(
+      message,
+      canvas.offsetLeft + (this.feet.x - camera.scrollX) * canvas.clientWidth / canvas.width,
+      canvas.offsetTop + (this.feet.y - camera.scrollY - 50) * canvas.clientHeight / canvas.height,
+    );
+  }
+
+  private feedback(event: Extract<SessionEvent, { type: 'ResourceGathered' | 'DayEnded' }>): void {
+    const { content, session } = this.options;
+    if (event.type === 'DayEnded') {
+      this.fade(() => this.refreshWorld());
+      this.panel?.announce(formatWorldText(content.text, 'ui.world.day', { day: event.day }));
+      return;
+    }
+    this.refreshWorld();
+    const state = session.snapshot();
+    const message = formatWorldText(content.text, 'ui.world.yield', {
+      item: this.itemName(event.itemId), quantity: event.quantity, xp: event.xp,
+    });
+    const levelUp = event.levelsGained > 0 && state.phase === 'playing'
+      ? formatWorldText(content.text, 'ui.world.level_up', { level: state.player.level }) : '';
+    this.panel?.announce(levelUp ? `${message} ${levelUp}` : message);
   }
 }
