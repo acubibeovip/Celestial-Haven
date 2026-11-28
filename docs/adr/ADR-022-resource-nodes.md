@@ -1,6 +1,6 @@
 # ADR-022 Resource nodes and game days
 
-Status: Proposed
+Status: Accepted (2026-11-28, reviewed in PR #20)
 
 Yields and respawn intervals are provisional. Raw material sources, prices, and XP follow [ADR-017](ADR-017-m2-content.md).
 

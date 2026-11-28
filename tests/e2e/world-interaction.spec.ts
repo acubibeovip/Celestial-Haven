@@ -125,6 +125,7 @@ test.describe('touch world interaction', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 844, height: 390 } });
 
   test('reveals the 56px Interact button only in range and gathers by touch', async ({ page, baseURL, context }, info) => {
+    await page.clock.install();
     const { frame, errors } = await start(page, baseURL, true);
     const action = frame.getByRole('button', { name: 'Interact' });
     await expect(action).toBeHidden();
@@ -144,8 +145,17 @@ test.describe('touch world interaction', () => {
       }
     }
     try {
-      await drag(0, 50, () => page.waitForTimeout(250));
-      await drag(-50, 0, () => expect(map(frame)).toHaveText('Whisperwood', { timeout: 10_000 }));
+      // Cross one row using fixed simulation time regardless of runner scheduling.
+      await page.clock.pauseAt(new Date(await page.evaluate(() => Date.now()) + 500));
+      await drag(0, 50, () => page.clock.runFor(250));
+      await drag(-50, 0, async () => {
+        // Stop the drag within one short simulation step of arrival.
+        for (let step = 0; step < 36 && await map(frame).textContent() === 'Starbrook Village'; step++) {
+          await page.clock.runFor(180);
+        }
+      });
+      await page.clock.resume();
+      await expect(map(frame)).toHaveText('Whisperwood');
       await expect(action).toBeHidden();
       await drag(-50, 0, () => expect(prompt(frame)).toHaveText('E Gather Oak Log'));
       const target = await action.boundingBox();
