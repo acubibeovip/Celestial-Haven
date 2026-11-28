@@ -1,3 +1,4 @@
+import type { ResourceNode } from '@domain/gathering/harvest';
 import type { BagSlot } from '@domain/inventory/types';
 import type { Progression } from '@domain/progression/types';
 
@@ -47,6 +48,7 @@ export interface ItemInfo {
 }
 
 export interface NewGameCatalog {
+  resourceNodes: Readonly<Record<string, ResourceNode | undefined>>;
   progression: Progression;
   heroes: Readonly<Record<string, HeroInfo | undefined>>;
   templates: Readonly<Partial<Record<TemplateId, TemplateInfo>>>;

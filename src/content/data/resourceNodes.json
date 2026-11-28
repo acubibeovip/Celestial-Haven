@@ -1,0 +1,170 @@
+[
+  {
+    "id": "res_oak_log_01",
+    "kind": "gather",
+    "itemId": "item_oak_log",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_oak_log_02",
+    "kind": "gather",
+    "itemId": "item_oak_log",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_oak_log_03",
+    "kind": "gather",
+    "itemId": "item_oak_log",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_resin_01",
+    "kind": "gather",
+    "itemId": "item_resin",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_resin_02",
+    "kind": "gather",
+    "itemId": "item_resin",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_silverleaf_01",
+    "kind": "gather",
+    "itemId": "item_silverleaf",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_moonpetal_01",
+    "kind": "gather",
+    "itemId": "item_moonpetal",
+    "quantity": 1,
+    "respawnDays": 2
+  },
+  {
+    "id": "res_reed_fiber_01",
+    "kind": "gather",
+    "itemId": "item_reed_fiber",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_reed_fiber_02",
+    "kind": "gather",
+    "itemId": "item_reed_fiber",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_glow_moss_01",
+    "kind": "gather",
+    "itemId": "item_glow_moss",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_soft_feather_01",
+    "kind": "gather",
+    "itemId": "item_soft_feather",
+    "quantity": 1,
+    "respawnDays": 2
+  },
+  {
+    "id": "res_clay_01",
+    "kind": "gather",
+    "itemId": "item_clay",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_stone_01",
+    "kind": "mine",
+    "itemId": "item_stone",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_stone_02",
+    "kind": "mine",
+    "itemId": "item_stone",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_stone_03",
+    "kind": "mine",
+    "itemId": "item_stone",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_coal_01",
+    "kind": "mine",
+    "itemId": "item_coal",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_coal_02",
+    "kind": "mine",
+    "itemId": "item_coal",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_coal_03",
+    "kind": "mine",
+    "itemId": "item_coal",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_copper_ore_01",
+    "kind": "mine",
+    "itemId": "item_copper_ore",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_copper_ore_02",
+    "kind": "mine",
+    "itemId": "item_copper_ore",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_iron_ore_01",
+    "kind": "mine",
+    "itemId": "item_iron_ore",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_iron_ore_02",
+    "kind": "mine",
+    "itemId": "item_iron_ore",
+    "quantity": 2,
+    "respawnDays": 1
+  },
+  {
+    "id": "res_quartz_01",
+    "kind": "mine",
+    "itemId": "item_quartz",
+    "quantity": 1,
+    "respawnDays": 2
+  },
+  {
+    "id": "res_starlite_ore_01",
+    "kind": "mine",
+    "itemId": "item_starlite_ore",
+    "quantity": 1,
+    "respawnDays": 2
+  }
+]

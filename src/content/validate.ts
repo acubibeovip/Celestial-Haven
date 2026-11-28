@@ -6,6 +6,8 @@ import { itemSchema } from './schema/item.ts';
 import { progressionSchema } from './schema/progression.ts';
 import { recipeSchema } from './schema/recipe.ts';
 import { questSchema, type QuestDef } from './schema/quest.ts';
+import { rawMaterialSources } from './rawMaterialSources.ts';
+import { resourceNodeSchema } from './schema/resourceNode.ts';
 import { stringsSchema } from './schema/strings.ts';
 import { templatesSchema } from './schema/template.ts';
 
@@ -15,6 +17,7 @@ const definitions = {
   items: { prefix: 'item_', schema: itemSchema },
   recipes: { prefix: 'recipe_', schema: recipeSchema },
   quests: { prefix: 'q_', schema: questSchema },
+  resourceNodes: { prefix: 'res_', schema: resourceNodeSchema },
 } as const;
 
 type DefinitionKind = keyof typeof definitions;
@@ -27,6 +30,7 @@ export const contentFiles = {
   strings: 'strings.en.json',
   templates: 'templates.json',
   progression: 'progression.json',
+  resourceNodes: 'resourceNodes.json',
 } as const;
 
 type Kind = keyof typeof contentFiles;
@@ -95,11 +99,12 @@ function checkQuestCycles(quests: Map<string, Located<QuestDef>>, errors: Valida
 
 export function validateContent(files: Readonly<Record<string, unknown>>): Result<Summary, ValidationError[]> {
   const errors: ValidationError[] = [];
-  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0 };
+  const counts: Summary['counts'] = { elements: 0, heroes: 0, items: 0, recipes: 0, quests: 0, strings: 0, templates: 0, progression: 0, resourceNodes: 0 };
   const absent: Kind[] = [];
   const allIds = new Map<string, { file: string; path: string }>();
   const idsByKind: Record<DefinitionKind, Set<string>> = {
     elements: new Set(), heroes: new Set(), items: new Set(), recipes: new Set(), quests: new Set(),
+    resourceNodes: new Set(),
   };
 
   for (const file of Object.keys(files).sort()) {
@@ -205,7 +210,9 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
   const heroes = readKind('heroes', definitions.heroes.schema);
   const items = readKind('items', definitions.items.schema);
   const recipes = readKind('recipes', definitions.recipes.schema);
+  const itemsById = new Map(items.map(({ value }) => [value.id, value]));
   const quests = readKind('quests', definitions.quests.schema);
+  const resourceNodes = readKind('resourceNodes', definitions.resourceNodes.schema);
   if (!Object.hasOwn(files, stringsFile)) absent.push('strings');
 
   function checkRef(file: string, path: string, kind: DefinitionKind, id: string): void {
@@ -222,7 +229,6 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
     } else {
       counts.templates = Object.keys(parsed.data).length;
       checkStringRefs(templatesFile, '$', parsed.data);
-      const itemsById = new Map(items.map(({ value }) => [value.id, value]));
       for (const [templateId, template] of Object.entries(parsed.data)) {
         for (const [slot, id] of Object.entries(template.starterGear)) {
           const path = issuePath('$', [templateId, 'starterGear', slot]);
@@ -287,6 +293,19 @@ export function validateContent(files: Readonly<Record<string, unknown>>): Resul
       checkRef('quests.json', `${path}.reward.items[${index}].itemId`, 'items', itemId);
     });
     if (idsByKind.quests.has(value.id) && !questGraph.has(value.id)) questGraph.set(value.id, quest);
+  }
+
+  for (const { value: node, path } of resourceNodes) {
+    const file = contentFiles.resourceNodes;
+    const itemPath = `${path}.itemId`;
+    const item = itemsById.get(node.itemId);
+    if (!item) {
+      checkRef(file, itemPath, 'items', node.itemId);
+    } else if (item.kind !== 'material' || !rawMaterialSources.has(item.id)) {
+      errors.push({ file, path: itemPath, code: 'SCHEMA', message: 'Expected an ADR-017 raw material.' });
+    } else if (rawMaterialSources.get(item.id) !== node.kind) {
+      errors.push({ file, path: `${path}.kind`, code: 'SCHEMA', message: 'Node kind must match the material source in ADR-017.' });
+    }
   }
 
   checkQuestCycles(questGraph, errors);
